@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  LINEA — freelance hairstylist · portfolio & booking site
+  One file · Tailwind CSS (CDN) · Vanilla JavaScript
+  ============================================================================
+ 
+  QUICK CUSTOMISATION CHECKLIST
+  1. Brand ........... search for "Linea" (nav, footer, <title>, meta tags)
+  2. Photos .......... hero, about and gallery use Unsplash placeholders.
+                       Swap `src` (thumbnail) and `data-full` (lightbox size)
+                       and update the alt text.
+  3. Prices .......... section #about -> "Services & prices"
+  4. Instagram ....... search for "yourhandle"
+  5. Location ........ search for "Your City, Country"
+  6. Calendly ........ set CONFIG.calendlyUrl in the <script> at the bottom
+                       (or paste Calendly's own embed code into #calendly-embed)
+  7. Photo colour .... photos are greyscale to keep the palette monochrome.
+                       In the <style> block set --photo-filter: none for colour.
+  ============================================================================
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#ffffff" />
+ 
+  <title>Linea &mdash; Hair Studio &middot; Book an Appointment</title>
+  <meta name="description" content="Precision haircuts in a calm, private home studio. One client at a time, never rushed. See the work and book your appointment online." />
+ 
+  <!-- Open Graph (link previews) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Linea &mdash; Hair Studio" />
+  <meta property="og:description" content="Precision haircuts in a calm, private home studio. Book your appointment online." />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" />
+ 
+  <!-- Inline favicon: black tile with a white "L" -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='9'%20fill='black'/%3E%3Cpath%20d='M12%208v16h9'%20fill='none'%20stroke='white'%20stroke-width='3'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E" />
+ 
+  <!-- Fonts & image host -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
+ 
+  <!-- Tailwind CSS (Play CDN). For production traffic, consider a compiled build. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+          },
+          transitionTimingFunction: {
+            premium: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          },
+        },
+      },
+    };
+  </script>
+ 
+  <style>
+    /* ==========================================================================
+       1 · TOKENS & BASE
+       ========================================================================== */
+    :root {
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);   /* smooth expo-out easing used throughout */
+      --photo-filter: grayscale(1);             /* "none" = show photos in full colour    */
+    }
+    html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+    .no-scroll { overflow: hidden; }
+    [tabindex="-1"]:focus { outline: none; }
+    :focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
+    .on-dark :focus-visible { outline-color: #ffffff; }
+ 
+    /* ==========================================================================
+       2 · TYPOGRAPHY & SMALL COMPONENTS
+       ========================================================================== */
+    .eyebrow {
+      font-size: 0.75rem; line-height: 1; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase; color: #737373;
+    }
+    .on-dark .eyebrow { color: #a3a3a3; }
+ 
+    .hero-title {
+      font-size: clamp(3rem, 8vw, 5.75rem);
+      line-height: 0.95; letter-spacing: -0.045em; font-weight: 600;
+    }
+    .section-title {
+      font-size: clamp(2.25rem, 5.5vw, 4rem);
+      line-height: 1.03; letter-spacing: -0.04em; font-weight: 600;
+    }
+    /* Clips a headline line so it can slide up from behind a mask */
+    .line-mask { display: block; overflow: hidden; padding-bottom: 0.12em; margin-bottom: -0.12em; }
+ 
+    /* Text link with an underline that retracts on hover */
+    .link-underline { position: relative; display: inline-block; padding-bottom: 2px; }
+    .link-underline::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+      background: currentColor; transform-origin: left;
+      transition: transform 0.6s var(--ease);
+    }
+    .link-underline:hover::after { transform: scaleX(0); transform-origin: right; }
+ 
+    /* Primary dark call-to-action */
+    .btn-dark {
+      display: inline-flex; align-items: center; gap: 1rem;
+      padding: 0.8rem 0.8rem 0.8rem 1.9rem; border-radius: 9999px;
+      background: #0a0a0a; color: #ffffff;
+      font-size: 0.9375rem; font-weight: 500; letter-spacing: -0.005em;
+      box-shadow: 0 12px 32px -14px rgba(0, 0, 0, 0.55);
+      transition: background-color 0.5s var(--ease), transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+    }
+    .btn-dark:hover { background: #262626; transform: translateY(-2px); box-shadow: 0 20px 44px -16px rgba(0, 0, 0, 0.6); }
+    .btn-dark:active { transform: translateY(0); }
+    .btn-icon {
+      display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 9999px;
+      background: #ffffff; color: #0a0a0a; transition: transform 0.5s var(--ease);
+    }
+    .btn-dark:hover .btn-icon { transform: translateX(3px); }
+ 
+    /* Round icon button (Instagram) */
+    .social {
+      display: inline-grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 9999px;
+      border: 1px solid #d4d4d4; color: #0a0a0a;
+      transition: background-color 0.4s var(--ease), color 0.4s var(--ease), border-color 0.4s var(--ease), transform 0.4s var(--ease);
+    }
+    .social:hover { background: #0a0a0a; color: #ffffff; border-color: #0a0a0a; transform: translateY(-2px); }
+ 
+    /* ==========================================================================
+       3 · HEADER & NAVIGATION
+       ========================================================================== */
+    .site-header {
+      border-bottom: 1px solid transparent;
+      -webkit-backdrop-filter: saturate(100%) blur(0px);
+      backdrop-filter: saturate(100%) blur(0px);
+      transition: background-color 0.5s var(--ease), border-color 0.5s var(--ease),
+                  -webkit-backdrop-filter 0.5s var(--ease), backdrop-filter 0.5s var(--ease);
+    }
+    .site-header nav { transition: padding 0.5s var(--ease); }
+    .site-header.is-scrolled {
+      background-color: rgba(255, 255, 255, 0.72);
+      border-bottom-color: rgba(0, 0, 0, 0.06);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      backdrop-filter: saturate(180%) blur(20px);
+    }
+    .site-header.is-scrolled nav { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+ 
+    .nav-link { position: relative; padding: 0.25rem 0; font-size: 0.875rem; color: #525252; transition: color 0.4s var(--ease); }
+    .nav-link::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: currentColor;
+      transform: scaleX(0); transform-origin: right; transition: transform 0.5s var(--ease);
+    }
+    .nav-link:hover, .nav-link.is-active { color: #0a0a0a; }
+    .nav-link:hover::after, .nav-link.is-active::after { transform: scaleX(1); transform-origin: left; }
+ 
+    .nav-cta {
+      display: inline-flex; align-items: center; padding: 0.6rem 1.3rem; border-radius: 9999px;
+      background: #0a0a0a; color: #ffffff; font-size: 0.875rem; font-weight: 500;
+      transition: background-color 0.4s var(--ease), transform 0.4s var(--ease);
+    }
+    .nav-cta:hover { background: #404040; transform: translateY(-1px); }
+ 
+    /* Hamburger: two lines that morph into a cross */
+    .burger { position: relative; width: 2.75rem; height: 2.75rem; margin-right: -0.5rem; border-radius: 9999px; }
+    .burger span {
+      position: absolute; left: 50%; top: calc(50% - 1px); width: 1.375rem; height: 2px;
+      background: #0a0a0a; border-radius: 2px; transition: transform 0.5s var(--ease);
+    }
+    .burger span:nth-child(1) { transform: translate(-50%, -4px); }
+    .burger span:nth-child(2) { transform: translate(-50%, 4px); }
+    .burger[aria-expanded="true"] span:nth-child(1) { transform: translate(-50%, 0) rotate(45deg); }
+    .burger[aria-expanded="true"] span:nth-child(2) { transform: translate(-50%, 0) rotate(-45deg); }
+ 
+    /* Full-screen mobile menu */
+    .mobile-menu { visibility: hidden; opacity: 0; transition: opacity 0.5s var(--ease), visibility 0s linear 0.5s; }
+    .mobile-menu.is-open { visibility: visible; opacity: 1; transition: opacity 0.5s var(--ease), visibility 0s; }
+    .mobile-link {
+      display: block; padding: 0.3rem 0; font-size: clamp(2.5rem, 13vw, 3.5rem);
+      font-weight: 600; letter-spacing: -0.04em; line-height: 1.05; color: #0a0a0a;
+    }
+    .stagger { opacity: 0; transform: translateY(24px); transition: opacity 0.6s var(--ease), transform 0.8s var(--ease); }
+    .mobile-menu.is-open .stagger { opacity: 1; transform: none; transition-delay: calc(120ms + var(--i, 0) * 70ms); }
+ 
+    /* ==========================================================================
+       4 · SCROLL-REVEAL & IMAGE LOADING
+       ========================================================================== */
+    [data-reveal] {
+      opacity: 0; transform: translate3d(0, 28px, 0);
+      transition: opacity 1s var(--ease), transform 1s var(--ease);
+      transition-delay: var(--d, 0ms);
+    }
+    [data-reveal="line"] { opacity: 1; transform: translate3d(0, 110%, 0); transition: transform 1.1s var(--ease); transition-delay: var(--d, 0ms); }
+    [data-reveal].is-visible { opacity: 1; transform: none; }
+ 
+    .photo { filter: var(--photo-filter); }
+    .img-fade { opacity: 0; transition: opacity 0.9s var(--ease); }
+    .img-fade.is-loaded { opacity: 1; }
+ 
+    /* Hero & about photos: slow zoom-out while the frame fades in */
+    .reveal-img { overflow: hidden; }
+    .reveal-img .reveal-target { transform: scale(1.12); transition: opacity 0.9s var(--ease), transform 1.8s var(--ease); }
+    .reveal-img.is-visible .reveal-target { transform: scale(1); }
+ 
+    /* Shown if a photo fails to load, so the layout never collapses */
+    .is-broken { background-image: linear-gradient(135deg, #e5e5e5, #cfcfcf); }
+    .is-broken img { display: none; }
+ 
+    .hero-glow {
+      background:
+        radial-gradient(60% 55% at 85% 10%, #f0f0f0 0%, rgba(255, 255, 255, 0) 70%),
+        radial-gradient(45% 45% at 0% 100%, #f7f7f7 0%, rgba(255, 255, 255, 0) 70%);
+    }
+    .booking-glow {
+      background:
+        radial-gradient(60% 50% at 80% 0%, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0) 70%),
+        radial-gradient(50% 50% at 0% 100%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+    }
+ 
+    /* ==========================================================================
+       5 · ABOUT — PRICE LIST
+       ========================================================================== */
+    .price-row {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem;
+      padding: 1.25rem 0; border-bottom: 1px solid #e5e5e5;
+      transition: padding-left 0.6s var(--ease);
+    }
+    .price-row:hover { padding-left: 0.75rem; }
+    .price-name   { font-size: 1.0625rem; font-weight: 500; letter-spacing: -0.01em; color: #0a0a0a; }
+    .price-meta   { margin-top: 0.25rem; font-size: 0.8125rem; color: #737373; }
+    .price-amount { white-space: nowrap; font-size: 1.0625rem; font-weight: 500; font-variant-numeric: tabular-nums; color: #0a0a0a; }
+ 
+    /* ==========================================================================
+       6 · GALLERY TILES
+       ========================================================================== */
+    .tile { position: relative; display: block; overflow: hidden; border-radius: 1rem; background: #e5e5e5; cursor: zoom-in; isolation: isolate; }
+    .tile .photo { transition: opacity 0.9s var(--ease), transform 1.4s var(--ease); }
+    .tile-overlay {
+      position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: flex-end;
+      padding: 0.9rem; pointer-events: none; opacity: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0) 55%);
+      transition: opacity 0.6s var(--ease);
+    }
+    .tile-badge {
+      display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.92); color: #0a0a0a;
+      transform: translateY(8px); transition: transform 0.6s var(--ease);
+    }
+    .tile:focus-visible .photo { transform: scale(1.06); }
+    .tile:focus-visible .tile-overlay { opacity: 1; }
+    .tile:focus-visible .tile-badge { transform: none; }
+    @media (hover: hover) {
+      .tile:hover .photo { transform: scale(1.06); }
+      .tile:hover .tile-overlay { opacity: 1; }
+      .tile:hover .tile-badge { transform: none; }
+    }
+ 
+    /* ==========================================================================
+       7 · LIGHTBOX
+       ========================================================================== */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center;
+      visibility: hidden; opacity: 0; touch-action: none; overscroll-behavior: contain;
+      transition: opacity 0.45s var(--ease), visibility 0s linear 0.45s;
+    }
+    .lightbox.is-open { visibility: visible; opacity: 1; transition: opacity 0.45s var(--ease), visibility 0s; }
+    .lightbox__backdrop {
+      position: absolute; inset: 0; cursor: zoom-out; background: rgba(10, 10, 10, 0.94);
+      -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    }
+    .lightbox__figure {
+      position: relative; margin: 0; display: flex; flex-direction: column; align-items: center; gap: 1rem;
+      padding: 4.5rem 1rem 5.5rem; max-width: 100%; pointer-events: none;
+    }
+    .lightbox__img {
+      display: block; width: auto; height: auto; object-fit: contain; border-radius: 0.75rem; pointer-events: auto;
+      max-width: min(94vw, 1200px);
+      max-height: calc(100vh - 10.5rem);
+      max-height: calc(100dvh - 10.5rem);
+      filter: var(--photo-filter); box-shadow: 0 30px 100px -20px rgba(0, 0, 0, 0.8);
+      opacity: 0; transform: scale(0.97);
+      transition: opacity 0.5s var(--ease), transform 0.7s var(--ease);
+    }
+    .lightbox__img.is-loaded { opacity: 1; transform: none; }
+    .lightbox__caption { max-width: 36rem; text-align: center; font-size: 0.8125rem; line-height: 1.5; color: #a3a3a3; }
+    .lightbox__caption:empty { display: none; }
+    .lightbox__counter {
+      position: absolute; top: calc(env(safe-area-inset-top, 0px) + 1.65rem); left: 1.25rem;
+      font-size: 0.75rem; letter-spacing: 0.2em; color: #a3a3a3; font-variant-numeric: tabular-nums;
+    }
+    .lightbox__btn {
+      position: absolute; display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 9999px;
+      color: #ffffff; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.14);
+      transition: background-color 0.4s var(--ease);
+    }
+    .lightbox__btn[hidden] { display: none; }
+    .lightbox__btn:hover { background: rgba(255, 255, 255, 0.2); }
+    .lightbox__btn:focus-visible { outline: 2px solid #ffffff; outline-offset: 3px; }
+    .lightbox__close { top: calc(env(safe-area-inset-top, 0px) + 1rem); right: 1rem; }
+    .lightbox__prev, .lightbox__next { top: 50%; margin-top: -1.5rem; }
+    .lightbox__prev { left: 1rem; }
+    .lightbox__next { right: 1rem; }
+    @media (max-width: 767px) {
+      /* On phones the arrows sit as a centred pair at the bottom */
+      .lightbox__prev, .lightbox__next { top: auto; margin-top: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 1.25rem); }
+      .lightbox__prev { left: calc(50% - 3.5rem); }
+      .lightbox__next { right: calc(50% - 3.5rem); }
+    }
+ 
+    /* ==========================================================================
+       8 · BOOKING EMBED
+       ========================================================================== */
+    .calendly-frame { display: block; width: 100%; height: 760px; border: 0; border-radius: 1rem; }
+ 
+    /* ==========================================================================
+       9 · REDUCED MOTION
+       ========================================================================== */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; transition-delay: 0ms !important; }
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+ 
+  <!-- Without JavaScript everything stays visible -->
+  <noscript>
+    <style>[data-reveal]{opacity:1!important;transform:none!important}.img-fade{opacity:1!important}</style>
+  </noscript>
+</head>
+ 
+<body class="bg-white font-sans text-neutral-900 antialiased selection:bg-neutral-900 selection:text-white">
+ 
+  <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[110] focus:rounded-full focus:bg-neutral-950 focus:px-5 focus:py-3 focus:text-sm focus:text-white">
+    Skip to content
+  </a>
+ 
+  <!-- ======================================================================
+       NAVIGATION — transparent at the top, frosted glass once you scroll
+       ====================================================================== -->
+  <header id="site-header" class="site-header fixed inset-x-0 top-0 z-50">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 sm:px-8" aria-label="Primary">
+ 
+      <a href="#home" class="text-[0.8rem] font-semibold uppercase tracking-[0.32em]" aria-label="Linea, back to top">
+        Linea<span class="hidden font-normal text-neutral-500 sm:inline">&nbsp;/ Hair Studio</span>
+      </a>
+ 
+      <!-- Desktop links -->
+      <ul class="hidden items-center gap-9 md:flex">
+        <li><a href="#home"    class="nav-link" data-nav-link>Home</a></li>
+        <li><a href="#about"   class="nav-link" data-nav-link>About</a></li>
+        <li><a href="#gallery" class="nav-link" data-nav-link>Gallery</a></li>
+        <li><a href="#booking" class="nav-cta">Booking</a></li>
+      </ul>
+ 
+      <!-- Mobile hamburger -->
+      <button id="menu-toggle" type="button" class="burger md:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </nav>
+  </header>
+ 
+  <!-- Mobile menu overlay (sits just below the header so the toggle stays visible) -->
+  <div id="mobile-menu" class="mobile-menu fixed inset-0 z-40 bg-white md:hidden" aria-hidden="true">
+    <div class="flex h-full flex-col justify-between px-5 pb-10 pt-28 sm:px-8">
+      <ul class="space-y-1">
+        <li class="stagger" style="--i:0"><a href="#home"    class="mobile-link">Home</a></li>
+        <li class="stagger" style="--i:1"><a href="#about"   class="mobile-link">About</a></li>
+        <li class="stagger" style="--i:2"><a href="#gallery" class="mobile-link">Gallery</a></li>
+        <li class="stagger" style="--i:3"><a href="#booking" class="mobile-link">Booking</a></li>
+      </ul>
+ 
+      <div class="stagger flex items-end justify-between border-t border-neutral-200 pt-6 text-sm text-neutral-500" style="--i:4">
+        <p>Private home studio<br />By appointment only</p>
+        <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" class="social" aria-label="Instagram">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+ 
+  <main id="main">
+ 
+    <!-- ====================================================================
+         1 · HOME / HERO
+         ==================================================================== -->
+    <section id="home" class="relative isolate flex min-h-[100svh] items-center overflow-hidden pb-16 pt-28 sm:pt-32 lg:pb-20">
+      <div class="hero-glow absolute inset-0 -z-10" aria-hidden="true"></div>
+ 
+      <div class="mx-auto grid w-full max-w-6xl items-end gap-14 px-5 sm:px-8 lg:grid-cols-12 lg:gap-10">
+ 
+        <!-- Copy -->
+        <div class="lg:col-span-7 lg:pb-4">
+          <p data-reveal class="eyebrow inline-flex items-center gap-3">
+            <span class="relative flex h-2 w-2" aria-hidden="true">
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-neutral-900 opacity-30"></span>
+              <span class="relative inline-flex h-2 w-2 rounded-full bg-neutral-900"></span>
+            </span>
+            Freelance hairstylist &middot; Home studio
+          </p>
+ 
+          <h1 class="hero-title mt-8">
+            <span class="line-mask"><span data-reveal="line" class="block" style="--d:120ms">Gyruktz.</span></span>
+            <span class="line-mask"><span data-reveal="line" class="block text-neutral-500" style="--d:240ms">Beerbershop.</span></span>
+          </h1>
+ 
+          <p data-reveal class="mt-8 max-w-md text-base leading-relaxed text-neutral-600 sm:text-lg" style="--d:360ms">
+            Precision haircuts in a calm, private studio. One client at a time &mdash; never rushed.
+          </p>
+ 
+          <div data-reveal class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-5" style="--d:480ms">
+            <a href="#booking" class="btn-dark">
+              Book an Appointment
+              <span class="btn-icon" aria-hidden="true">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </span>
+            </a>
+            <a href="#gallery" class="link-underline text-sm font-medium text-neutral-900">See the work</a>
+          </div>
+ 
+          <dl data-reveal class="mt-14 grid max-w-lg grid-cols-3 gap-4 border-t border-neutral-200 pt-6" style="--d:600ms">
+            <div>
+              <dt class="text-[0.65rem] uppercase tracking-[0.18em] text-neutral-500">Format</dt>
+              <dd class="mt-1.5 text-[0.8rem] font-medium leading-snug text-neutral-900">One client at a time</dd>
+            </div>
+            <div>
+              <dt class="text-[0.65rem] uppercase tracking-[0.18em] text-neutral-500">Where</dt>
+              <dd class="mt-1.5 text-[0.8rem] font-medium leading-snug text-neutral-900">Private home studio</dd>
+            </div>
+            <div>
+              <dt class="text-[0.65rem] uppercase tracking-[0.18em] text-neutral-500">Booking</dt>
+              <dd class="mt-1.5 text-[0.8rem] font-medium leading-snug text-neutral-900">Online, 24/7</dd>
+            </div>
+          </dl>
+        </div>
+ 
+        <!-- Photo -->
+        <div class="lg:col-span-5">
+          <figure data-reveal data-img-wrap style="--d:250ms"
+                  class="reveal-img relative isolate aspect-[4/5] w-full overflow-hidden rounded-[1.75rem] bg-neutral-200 sm:max-w-md lg:max-h-[72vh] lg:max-w-none">
+            <!-- EDIT: replace with your own photo -->
+            <img src="IMG_0350.jpeg"
+                 alt="Portrait with a clean, modern haircut"
+                 class="photo img-fade reveal-target absolute inset-0 h-full w-full object-cover object-[50%_25%]"
+                 fetchpriority="high" decoding="async" />
+            <figcaption class="absolute inset-x-4 bottom-4 flex items-center justify-between rounded-full bg-white/80 px-5 py-3 text-xs backdrop-blur-md">
+              <span class="font-medium text-neutral-900">Home studio</span>
+              <span class="text-neutral-600">By appointment</span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ====================================================================
+         2 · ABOUT ("Rólam")
+         ==================================================================== -->
+    <section id="about" class="bg-neutral-50 py-24 sm:py-32 lg:py-40">
+      <div class="mx-auto max-w-6xl px-5 sm:px-8">
+ 
+        <header data-reveal class="max-w-2xl">
+          <p class="eyebrow">01 &mdash; About &middot; <span lang="hu">R&oacute;lam</span></p>
+          <h2 class="section-title mt-5">Modern cutting,<br /> made personal.</h2>
+        </header>
+ 
+        <div class="mt-14 grid gap-14 lg:mt-20 lg:grid-cols-12 lg:gap-20">
+ 
+          <!-- Portrait -->
+          <div class="lg:col-span-5">
+            <figure data-reveal data-img-wrap
+                    class="reveal-img relative isolate aspect-[4/5] overflow-hidden rounded-[1.75rem] bg-neutral-200 sm:max-w-md lg:sticky lg:top-28 lg:max-w-none">
+              <!-- EDIT: replace with a portrait of yourself -->
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&amp;fit=crop&amp;w=1000&amp;q=80"
+                   alt="Portrait of the stylist"
+                   class="photo img-fade reveal-target absolute inset-0 h-full w-full object-cover object-[50%_25%]"
+                   loading="lazy" decoding="async" />
+            </figure>
+          </div>
+ 
+          <!-- Story, philosophy, prices -->
+          <div class="lg:col-span-7">
+ 
+            <div data-reveal class="space-y-6">
+              <p class="text-2xl font-medium leading-snug tracking-tight text-neutral-900 sm:text-3xl">
+                I&rsquo;m a freelance hairstylist working from a quiet studio at home &mdash; no waiting room, no background noise, just you and my full attention.
+              </p>
+              <p class="max-w-xl text-base leading-relaxed text-neutral-600 sm:text-lg">
+                My philosophy on modern cutting is simple: the best haircut isn&rsquo;t the loudest one. It follows the shape of your head and the way your hair naturally grows, it grows out gracefully, and it styles in minutes &mdash; so you look like yourself on a good day, every day.
+              </p>
+            </div>
+ 
+            <ol class="mt-14 grid gap-8 sm:grid-cols-3 sm:gap-6">
+              <li data-reveal class="border-t border-neutral-300 pt-5">
+                <span class="text-xs tabular-nums text-neutral-500">01</span>
+                <h3 class="mt-3 text-base font-semibold tracking-tight">Listen</h3>
+                <p class="mt-2 text-sm leading-relaxed text-neutral-500">We start with a conversation about your hair, your routine and what you want from the result.</p>
+              </li>
+              <li data-reveal class="border-t border-neutral-300 pt-5" style="--d:100ms">
+                <span class="text-xs tabular-nums text-neutral-500">02</span>
+                <h3 class="mt-3 text-base font-semibold tracking-tight">Shape</h3>
+                <p class="mt-2 text-sm leading-relaxed text-neutral-500">Head shape, growth patterns and density guide every decision I make with the shears.</p>
+              </li>
+              <li data-reveal class="border-t border-neutral-300 pt-5" style="--d:200ms">
+                <span class="text-xs tabular-nums text-neutral-500">03</span>
+                <h3 class="mt-3 text-base font-semibold tracking-tight">Refine</h3>
+                <p class="mt-2 text-sm leading-relaxed text-neutral-500">Texture, finish and a few honest styling tips for the morning after.</p>
+              </li>
+            </ol>
+ 
+            <!-- Price list — EDIT: services, durations and prices -->
+            <div data-reveal class="mt-20">
+              <div class="flex items-end justify-between gap-6">
+                <h3 class="text-sm font-semibold uppercase tracking-[0.2em]">Services &amp; prices</h3>
+                <p class="text-xs text-neutral-500">Wash &amp; style included</p>
+              </div>
+ 
+              <ul class="mt-6 border-t border-neutral-900">
+                <li class="price-row">
+                  <div>
+                    <p class="price-name">Signature cut</p>
+                    <p class="price-meta">Consultation, cut &amp; finish &middot; 60 min</p>
+                  </div>
+                  <p class="price-amount">12&nbsp;000&nbsp;Ft</p>
+                </li>
+                <li class="price-row">
+                  <div>
+                    <p class="price-name">Clipper cut</p>
+                    <p class="price-meta">Single length or fade, with a clean line-up &middot; 30 min</p>
+                  </div>
+                  <p class="price-amount">7&nbsp;000&nbsp;Ft</p>
+                </li>
+                <li class="price-row">
+                  <div>
+                    <p class="price-name">Cut &amp; beard shaping</p>
+                    <p class="price-meta">The full service &middot; 75 min</p>
+                  </div>
+                  <p class="price-amount">15&nbsp;000&nbsp;Ft</p>
+                </li>
+                <li class="price-row">
+                  <div>
+                    <p class="price-name">Beard shaping</p>
+                    <p class="price-meta">Trim, shape &amp; line-up &middot; 30 min</p>
+                  </div>
+                  <p class="price-amount">6&nbsp;000&nbsp;Ft</p>
+                </li>
+                <li class="price-row">
+                  <div>
+                    <p class="price-name">Children&rsquo;s cut</p>
+                    <p class="price-meta">Under 12 years &middot; 30 min</p>
+                  </div>
+                  <p class="price-amount">6&nbsp;000&nbsp;Ft</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ====================================================================
+         3 · GALLERY ("Galéria")
+         Asymmetrical grid: 2 columns on phones, 4 on desktop.
+         Each tile is a <button> — the lightbox reads data-full and the <img>.
+         ==================================================================== -->
+    <section id="gallery" class="bg-white py-24 sm:py-32 lg:py-40">
+      <div class="mx-auto max-w-6xl px-5 sm:px-8">
+ 
+        <header class="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
+          <div data-reveal>
+            <p class="eyebrow">02 &mdash; Gallery &middot; <span lang="hu">Gal&eacute;ria</span></p>
+            <h2 class="section-title mt-5">Selected work.</h2>
+          </div>
+          <p data-reveal class="max-w-xs text-sm leading-relaxed text-neutral-500" style="--d:100ms">
+            Tap any image to view it full size.
+            <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" class="link-underline font-medium text-neutral-900">More on Instagram</a>
+          </p>
+        </header>
+ 
+        <!-- EDIT: swap the photos (src = thumbnail, data-full = lightbox size) and the alt text -->
+        <div id="gallery-grid" class="mt-12 grid grid-flow-dense auto-rows-[150px] grid-cols-2 gap-3 sm:auto-rows-[200px] sm:gap-4 md:auto-rows-[240px] md:grid-cols-4">
+ 
+          <button type="button" class="tile col-span-2 row-span-2" data-gallery-item data-img-wrap data-reveal aria-haspopup="dialog" aria-label="Open image 1 of 8"
+                  data-full="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&amp;fit=crop&amp;w=1800&amp;q=85">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Recent work, portrait"
+                 class="photo img-fade absolute inset-0 h-full w-full object-cover object-[50%_25%]" loading="lazy" decoding="async" />
+            <span class="tile-overlay" aria-hidden="true"><span class="tile-badge"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></span></span>
+          </button>
+ 
+          <button type="button" class="tile row-span-2" data-gallery-item data-img-wrap data-reveal aria-haspopup="dialog" aria-label="Open image 2 of 8" style="--d:80ms"
+                  data-full="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&amp;fit=crop&amp;w=1800&amp;q=85">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Recent work, portrait"
+                 class="photo img-fade absolute inset-0 h-full w-full object-cover object-[50%_25%]" loading="lazy" decoding="async" />
+            <span class="tile-overlay" aria-hidden="true"><span class="tile-badge"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></span></span>
+          </button>
+ 
+          <button type="button" class="tile" data-gallery-item data-img-wrap data-reveal aria-haspopup="dialog" aria-label="Open image 3 of 8" style="--d:160ms"
+                  data-full="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&amp;fit=crop&amp;w=1800&amp;q=85">
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&amp;fit=crop&amp;w=700&amp;q=80" alt="Recent work, portrait"
+                 class="photo img-fade absolute inset-0 h-full w-full object-cover object-[50%_25%]" loading="lazy" decoding="async" />
+            <span class="tile-overlay" aria-hidden="true"><span class="tile-badge"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></span></span>
+          </button>
+ 
+          <button type="button" class="tile md:row-span-2" data-gallery-item data-img-wrap data-reveal aria-haspopup="dialog" aria-label="Open image 4 of 8" style="--d:80ms"
+                  data-full="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&amp;fit=crop&amp;w=1800&amp;q=85">
+            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Recent work, portrait"
+                 class="photo img-fade absolute inset-0 h-full w-full object-cover object-[50%_25%]" loading="lazy" decoding="async" />
+            <span class="tile-overlay" aria-hidden="true"><span class="tile-badge"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></span></span>
+          </button>
+ 
+          <button type="button" class="tile row-span-2" data-gallery-item data-img-wrap data-reveal aria-haspopup="dialog" aria-label="Open image 5 of 8"
+                  data-full="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&amp;fit=crop&amp;w=1800&amp;q=85">
+            <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Recent work, portrait"
+                 class="photo img-fade absolute inset-0 h-full w-full object-cover object-[50%_25%]" loading="lazy" decoding="async" />
+            <span class="tile-overlay" aria-hidden="true"><span class="tile-badge"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></span></span>
+          </button>
+ 
+          <button type="button" class="tile md:col-span-2" data-gallery-item data-img-wrap data-reveal aria-haspopup="dialog" aria-label="Open image 6 of 8" style="--d:80ms"
+                  data-full="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&amp;fit=crop&amp;w=1800&amp;q=85">
+            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Studio mood, architectural detail"
+                 class="photo img-fade absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+            <span class="tile-overlay" aria-hidden="true"><span class="tile-badge"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></span></span>
+          </button>
+ 
+          <button type="button" class="tile md:col-span-2" data-gallery-item data-img-wrap data-reveal aria-haspopup="dialog" aria-label="Open image 7 of 8" style="--d:160ms"
+                  data-full="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&amp;fit=crop&amp;w=1800&amp;q=85">
+            <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Studio mood, architectural detail"
+                 class="photo img-fade absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+            <span class="tile-overlay" aria-hidden="true"><span class="tile-badge"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></span></span>
+          </button>
+ 
+          <button type="button" class="tile col-span-2 md:col-span-1" data-gallery-item data-img-wrap data-reveal aria-haspopup="dialog" aria-label="Open image 8 of 8"
+                  data-full="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&amp;fit=crop&amp;w=1800&amp;q=85">
+            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Studio mood, minimal interior"
+                 class="photo img-fade absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+            <span class="tile-overlay" aria-hidden="true"><span class="tile-badge"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></span></span>
+          </button>
+ 
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ====================================================================
+         4 · BOOKING ("Időpontfoglalás")
+         ==================================================================== -->
+    <section id="booking" class="relative isolate overflow-hidden bg-neutral-950 py-24 text-white sm:py-32 lg:py-40">
+      <div class="booking-glow absolute inset-0 -z-10" aria-hidden="true"></div>
+ 
+      <div class="mx-auto max-w-6xl px-5 sm:px-8">
+        <div class="grid gap-14 lg:grid-cols-12 lg:gap-16">
+ 
+          <!-- Left: reassurance copy -->
+          <div class="on-dark lg:col-span-5">
+            <div data-reveal>
+              <p class="eyebrow">03 &mdash; Booking &middot; <span lang="hu">Id&#337;pontfoglal&aacute;s</span></p>
+              <h2 class="section-title mt-5">Find a time<br /> that suits you.</h2>
+              <p class="mt-6 max-w-sm text-base leading-relaxed text-neutral-400 sm:text-lg">
+                Choose a service and a slot in the calendar. You&rsquo;ll get a confirmation by email &mdash; including the studio address.
+              </p>
+            </div>
+ 
+            <ul data-reveal class="mt-12 space-y-6 text-sm text-neutral-400" style="--d:120ms">
+              <li class="flex items-start gap-4">
+                <svg class="mt-0.5 h-5 w-5 shrink-0 text-neutral-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                <span><span class="block font-medium text-white">30&ndash;75 minutes</span>Depending on the service you choose.</span>
+              </li>
+              <li class="flex items-start gap-4">
+                <svg class="mt-0.5 h-5 w-5 shrink-0 text-neutral-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
+                <span><span class="block font-medium text-white">Private home studio</span>The exact address is shared with your confirmation.</span>
+              </li>
+              <li class="flex items-start gap-4">
+                <svg class="mt-0.5 h-5 w-5 shrink-0 text-neutral-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" /></svg>
+                <span><span class="block font-medium text-white">Plans change?</span>Reschedule from the link in your confirmation email.</span>
+              </li>
+            </ul>
+ 
+            <p data-reveal class="mt-12 text-sm text-neutral-400" style="--d:200ms">
+              Prefer to ask first?
+              <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" class="link-underline text-white">Send a message on Instagram</a>.
+            </p>
+          </div>
+ 
+          <!-- Right: booking card -->
+          <div class="lg:col-span-7">
+            <div data-reveal style="--d:150ms"
+                 class="rounded-[2rem] bg-white p-4 text-neutral-900 shadow-[0_40px_120px_-40px_rgba(255,255,255,0.18)] sm:p-6">
+ 
+              <div class="flex items-start justify-between gap-6 px-1 pb-5 pt-1 sm:px-2">
+                <div>
+                  <h3 class="text-xl font-semibold tracking-tight sm:text-2xl">Select a suitable time below.</h3>
+                  <p class="mt-2 text-sm leading-relaxed text-neutral-500">Pick a service, choose a day, confirm &mdash; it takes under a minute.</p>
+                </div>
+                <span class="hidden shrink-0 rounded-full border border-neutral-200 px-3 py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-neutral-500 sm:inline-block">Online booking</span>
+              </div>
+ 
+              <!-- ============================================================
+                   CALENDLY EMBED AREA
+                   Option A (easiest): set CONFIG.calendlyUrl in the script at the
+                     bottom of this file. The placeholder below is removed and a
+                     responsive iframe is inserted automatically.
+                   Option B: delete #booking-placeholder and paste Calendly's own
+                     inline embed code inside #calendly-embed, for example:
+                       <div class="calendly-inline-widget"
+                            data-url="https://calendly.com/your-name/haircut"
+                            style="min-width:320px;height:700px;"></div>
+                       <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+                   ============================================================ -->
+              <div id="calendly-embed" class="overflow-hidden rounded-2xl">
+                <div id="booking-placeholder"
+                     class="flex min-h-[26rem] flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 px-6 py-14 text-center sm:min-h-[32rem]">
+                  <span class="grid h-14 w-14 place-items-center rounded-full border border-neutral-200 bg-white text-neutral-700">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" /><path d="M8 3v4M16 3v4M3.5 10h17" /></svg>
+                  </span>
+                  <p class="mt-6 text-sm font-semibold">Calendly embed goes here</p>
+                  <p class="mt-2 max-w-xs text-sm leading-relaxed text-neutral-500">Your live booking calendar replaces this placeholder as soon as you add your Calendly link.</p>
+                  <code class="mt-6 max-w-full overflow-x-auto whitespace-nowrap rounded-lg bg-neutral-900 px-4 py-2.5 text-xs text-neutral-200">CONFIG.calendlyUrl = 'https://calendly.com/your-name/haircut'</code>
+                </div>
+              </div>
+ 
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+ 
+  <!-- ======================================================================
+       FOOTER
+       ====================================================================== -->
+  <footer id="site-footer" class="bg-white">
+    <div class="mx-auto max-w-6xl px-5 py-16 sm:px-8">
+      <div class="grid gap-12 md:grid-cols-12">
+ 
+        <div class="md:col-span-5">
+          <a href="#home" class="text-[0.8rem] font-semibold uppercase tracking-[0.32em]">Linea</a>
+          <p class="mt-4 max-w-xs text-sm leading-relaxed text-neutral-500">Precision haircuts in a calm, private home studio.</p>
+        </div>
+ 
+        <div class="md:col-span-4">
+          <p class="eyebrow">Location</p>
+          <!-- EDIT: add your city / district -->
+          <address class="mt-4 text-sm not-italic leading-relaxed text-neutral-700">
+            Private home studio<br />
+            Your City, Country<br />
+            <span class="text-neutral-500">Exact address shared with your booking confirmation.</span>
+          </address>
+        </div>
+ 
+        <div class="md:col-span-3 md:justify-self-end">
+          <p class="eyebrow">Follow</p>
+          <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" class="social mt-4" aria-label="Instagram">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
+        </div>
+      </div>
+ 
+      <div class="mt-14 flex flex-col gap-4 border-t border-neutral-200 pt-6 text-xs text-neutral-500 sm:flex-row sm:items-center sm:justify-between">
+        <p>&copy; <span id="year">2026</span> Linea. All rights reserved.</p>
+        <a href="#home" class="inline-flex items-center gap-2 transition-colors duration-300 hover:text-neutral-900">
+          Back to top
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" /></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+ 
+  <!-- ======================================================================
+       LIGHTBOX — populated from the gallery tiles by the script below
+       ====================================================================== -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" aria-hidden="true">
+    <div class="lightbox__backdrop" data-lightbox-close></div>
+ 
+    <figure class="lightbox__figure">
+      <img id="lightbox-img" class="lightbox__img" alt="" />
+      <figcaption id="lightbox-caption" class="lightbox__caption"></figcaption>
+    </figure>
+ 
+    <p id="lightbox-counter" class="lightbox__counter" aria-live="polite"></p>
+ 
+    <button id="lightbox-close" type="button" class="lightbox__btn lightbox__close" data-lightbox-close aria-label="Close image viewer">
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+    <button id="lightbox-prev" type="button" class="lightbox__btn lightbox__prev" aria-label="Previous image">
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+    </button>
+    <button id="lightbox-next" type="button" class="lightbox__btn lightbox__next" aria-label="Next image">
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+    </button>
+  </div>
+ 
+  <!-- ======================================================================
+       JAVASCRIPT — vanilla, no dependencies
+       ====================================================================== -->
+  <script>
+    (() => {
+      'use strict';
+ 
+      /* ======================================================================
+         CONFIG — edit these values
+         ====================================================================== */
+      const CONFIG = {
+        // Paste your Calendly scheduling link to replace the booking placeholder.
+        // Example: 'https://calendly.com/your-name/haircut'
+        calendlyUrl: '',
+      };
+ 
+      /* ======================================================================
+         HELPERS
+         ====================================================================== */
+      const $  = (selector, scope = document) => scope.querySelector(selector);
+      const $$ = (selector, scope = document) => Array.from(scope.querySelectorAll(selector));
+      const root = document.documentElement;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ 
+      const lockScroll = (on) => root.classList.toggle('no-scroll', on);
+ 
+      // Makes page regions unreachable for keyboard / screen readers while an overlay is open.
+      const setInert = (selectors, on) => {
+        selectors.forEach((selector) => {
+          const el = $(selector);
+          if (el) el.toggleAttribute('inert', on);
+        });
+      };
+ 
+      // Lets other modules close the mobile menu (filled in by initMobileMenu).
+      const menu = { close() {} };
+ 
+      /* ======================================================================
+         1 · HEADER — frosted glass once the page is scrolled
+         ====================================================================== */
+      function initHeader() {
+        const header = $('#site-header');
+        if (!header) return;
+ 
+        let ticking = false;
+        const update = () => {
+          header.classList.toggle('is-scrolled', window.scrollY > 16);
+          ticking = false;
+        };
+ 
+        window.addEventListener('scroll', () => {
+          if (!ticking) {
+            window.requestAnimationFrame(update);
+            ticking = true;
+          }
+        }, { passive: true });
+ 
+        update();
+      }
+ 
+      /* ======================================================================
+         2 · MOBILE MENU — hamburger toggle
+         ====================================================================== */
+      function initMobileMenu() {
+        const toggle = $('#menu-toggle');
+        const panel  = $('#mobile-menu');
+        if (!toggle || !panel) return;
+ 
+        let open = false;
+ 
+        const set = (next) => {
+          open = next;
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+          panel.classList.toggle('is-open', open);
+          panel.setAttribute('aria-hidden', String(!open));
+          lockScroll(open);
+          setInert(['#main', '#site-footer'], open);
+        };
+ 
+        menu.close = () => { if (open) set(false); };
+ 
+        toggle.addEventListener('click', () => set(!open));
+ 
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && open) {
+            set(false);
+            toggle.focus();
+          }
+        });
+ 
+        // If the window grows to desktop size while the menu is open, reset it.
+        window.matchMedia('(min-width: 768px)').addEventListener('change', (event) => {
+          if (event.matches) set(false);
+        });
+      }
+ 
+      /* ======================================================================
+         3 · SMOOTH SCROLLING — every in-page "#anchor" link
+         ====================================================================== */
+      function initSmoothScroll() {
+        document.addEventListener('click', (event) => {
+          const link = event.target.closest('a[href^="#"]');
+          if (!link || event.defaultPrevented) return;
+          if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+ 
+          const hash = link.getAttribute('href');
+          if (!hash || hash === '#') return;
+ 
+          const target = document.getElementById(hash.slice(1));
+          if (!target) return;
+ 
+          event.preventDefault();
+          menu.close(); // unlock scrolling first if the mobile menu is open
+ 
+          target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+ 
+          try { history.pushState(null, '', hash); } catch (error) { /* sandboxed preview: ignore */ }
+ 
+          // Keyboard & screen-reader users: move focus to the destination.
+          target.setAttribute('tabindex', '-1');
+          target.focus({ preventScroll: true });
+        });
+      }
+ 
+      /* ======================================================================
+         4 · SCROLL SPY — underline the nav link of the section in view
+         ====================================================================== */
+      function initScrollSpy() {
+        const links = $$('[data-nav-link]');
+        if (!links.length || !('IntersectionObserver' in window)) return;
+ 
+        const sections = links.map((link) => $(link.getAttribute('href'))).filter(Boolean);
+ 
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            links.forEach((link) => {
+              const active = link.getAttribute('href') === '#' + entry.target.id;
+              link.classList.toggle('is-active', active);
+              if (active) link.setAttribute('aria-current', 'location');
+              else link.removeAttribute('aria-current');
+            });
+          });
+        }, { rootMargin: '-45% 0px -50% 0px' });
+ 
+        sections.forEach((section) => observer.observe(section));
+      }
+ 
+      /* ======================================================================
+         5 · REVEAL ON SCROLL — elements marked with data-reveal
+         ====================================================================== */
+      function initReveal() {
+        const items = $$('[data-reveal]');
+        if (!items.length) return;
+ 
+        if (reduceMotion || !('IntersectionObserver' in window)) {
+          items.forEach((el) => el.classList.add('is-visible'));
+          return;
+        }
+ 
+        const observer = new IntersectionObserver((entries, obs) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-visible');
+            obs.unobserve(entry.target);
+          });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.01 });
+ 
+        items.forEach((el) => observer.observe(el));
+      }
+ 
+      /* ======================================================================
+         6 · IMAGES — fade in when loaded, graceful fallback if one fails
+         ====================================================================== */
+      function initImages() {
+        $$('img.img-fade').forEach((img) => {
+          const wrap = img.closest('[data-img-wrap]');
+          const ok  = () => img.classList.add('is-loaded');
+          const bad = () => { if (wrap) wrap.classList.add('is-broken'); };
+ 
+          if (img.complete) {
+            if (img.naturalWidth > 0) ok(); else bad();
+            return;
+          }
+          img.addEventListener('load', ok, { once: true });
+          img.addEventListener('error', bad, { once: true });
+        });
+      }
+ 
+      /* ======================================================================
+         7 · LIGHTBOX — click a gallery tile to enlarge on a dark overlay
+            Keyboard: Esc closes, ← → navigate. Touch: swipe left / right.
+         ====================================================================== */
+      function initLightbox() {
+        const grid = $('#gallery-grid');
+        const box  = $('#lightbox');
+        if (!grid || !box) return;
+ 
+        const tiles = $$('[data-gallery-item]', grid);
+        if (!tiles.length) return;
+ 
+        const imgEl    = $('#lightbox-img', box);
+        const capEl    = $('#lightbox-caption', box);
+        const countEl  = $('#lightbox-counter', box);
+        const btnClose = $('#lightbox-close', box);
+        const btnPrev  = $('#lightbox-prev', box);
+        const btnNext  = $('#lightbox-next', box);
+ 
+        // Build the slide list straight from the markup, so adding a tile is all it takes.
+        const slides = tiles.map((tile) => {
+          const thumb = $('img', tile);
+          return {
+            src: tile.dataset.full || thumb.currentSrc || thumb.src,
+            alt: thumb.alt || '',
+            caption: tile.dataset.caption || '',
+          };
+        });
+ 
+        const regions = ['#site-header', '#mobile-menu', '#main', '#site-footer'];
+        let index = 0;
+        let isOpen = false;
+        let lastFocus = null;
+ 
+        const wrap = (i) => (i + slides.length) % slides.length;
+ 
+        const preload = (i) => {
+          const img = new Image();
+          img.src = slides[wrap(i)].src;
+        };
+ 
+        function render(i) {
+          index = wrap(i);
+          const slide = slides[index];
+ 
+          imgEl.classList.remove('is-loaded');
+          imgEl.onload  = () => imgEl.classList.add('is-loaded');
+          imgEl.onerror = () => { capEl.textContent = 'This image could not be loaded.'; };
+          imgEl.alt = slide.alt;
+          imgEl.src = slide.src;
+          if (imgEl.complete && imgEl.naturalWidth > 0) imgEl.classList.add('is-loaded');
+ 
+          capEl.textContent = slide.caption;
+          countEl.textContent = (index + 1) + ' / ' + slides.length;
+ 
+          preload(index + 1);
+          preload(index - 1);
+        }
+ 
+        function open(i, trigger) {
+          if (isOpen) return;
+          isOpen = true;
+          lastFocus = trigger || document.activeElement;
+          render(i);
+          box.classList.add('is-open');
+          box.setAttribute('aria-hidden', 'false');
+          lockScroll(true);
+          setInert(regions, true);
+          btnClose.focus({ preventScroll: true });
+        }
+ 
+        function close() {
+          if (!isOpen) return;
+          isOpen = false;
+          box.classList.remove('is-open');
+          box.setAttribute('aria-hidden', 'true');
+          lockScroll(false);
+          setInert(regions, false);
+          if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus({ preventScroll: true });
+        }
+ 
+        const step = (direction) => render(index + direction);
+ 
+        // Open from any tile
+        grid.addEventListener('click', (event) => {
+          const tile = event.target.closest('[data-gallery-item]');
+          if (tile) open(tiles.indexOf(tile), tile);
+        });
+ 
+        // Close: backdrop + close button
+        $$('[data-lightbox-close]', box).forEach((el) => el.addEventListener('click', close));
+ 
+        // Previous / next
+        btnPrev.addEventListener('click', () => step(-1));
+        btnNext.addEventListener('click', () => step(1));
+        if (slides.length < 2) {
+          btnPrev.hidden = true;
+          btnNext.hidden = true;
+        }
+ 
+        // Keyboard
+        document.addEventListener('keydown', (event) => {
+          if (!isOpen) return;
+ 
+          if (event.key === 'Escape') {
+            close();
+          } else if (event.key === 'ArrowRight') {
+            step(1);
+          } else if (event.key === 'ArrowLeft') {
+            step(-1);
+          } else if (event.key === 'Tab') {
+            // Keep focus inside the dialog
+            const focusable = [btnClose, btnPrev, btnNext].filter((el) => !el.hidden);
+            const first = focusable[0];
+            const last  = focusable[focusable.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+              event.preventDefault();
+              last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+              event.preventDefault();
+              first.focus();
+            }
+          }
+        });
+ 
+        // Touch swipe
+        let startX = null;
+        let startY = null;
+        box.addEventListener('touchstart', (event) => {
+          const touch = event.changedTouches[0];
+          startX = touch.clientX;
+          startY = touch.clientY;
+        }, { passive: true });
+ 
+        box.addEventListener('touchend', (event) => {
+          if (startX === null) return;
+          const touch = event.changedTouches[0];
+          const dx = touch.clientX - startX;
+          const dy = touch.clientY - startY;
+          startX = startY = null;
+          if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1);
+        }, { passive: true });
+      }
+ 
+      /* ======================================================================
+         8 · BOOKING — swap the placeholder for a Calendly iframe
+         ====================================================================== */
+      function initBooking() {
+        const holder = $('#calendly-embed');
+        const raw = (CONFIG.calendlyUrl || '').trim();
+        if (!holder || !raw) return;
+ 
+        let src;
+        try {
+          const url = new URL(raw);
+          // Match the monochrome UI (Calendly accepts hex colours without "#").
+          url.searchParams.set('hide_gdpr_banner', '1');
+          url.searchParams.set('background_color', 'ffffff');
+          url.searchParams.set('text_color', '171717');
+          url.searchParams.set('primary_color', '0a0a0a');
+          src = url.toString();
+        } catch (error) {
+          console.warn('[booking] CONFIG.calendlyUrl is not a valid URL:', raw);
+          return;
+        }
+ 
+        const frame = document.createElement('iframe');
+        frame.className = 'calendly-frame';
+        frame.src = src;
+        frame.title = 'Book an appointment';
+        frame.loading = 'lazy';
+ 
+        const placeholder = $('#booking-placeholder');
+        if (placeholder) placeholder.remove();
+        holder.appendChild(frame);
+      }
+ 
+      /* ======================================================================
+         INIT
+         ====================================================================== */
+      function init() {
+        initHeader();
+        initMobileMenu();
+        initSmoothScroll();
+        initScrollSpy();
+        initReveal();
+        initImages();
+        initLightbox();
+        initBooking();
+ 
+        const year = $('#year');
+        if (year) year.textContent = String(new Date().getFullYear());
+      }
+ 
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+      else init();
+    })();
+  </script>
+</body>
+</html>
