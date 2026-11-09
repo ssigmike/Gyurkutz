@@ -17,6 +17,8 @@
                        (or paste Calendly's own embed code into #calendly-embed)
   7. Photo colour .... photos are greyscale to keep the palette monochrome.
                        In the <style> block set --photo-filter: none for colour.
+  8. Membership ...... section #membership -> tier prices; payment links in
+                       CONFIG.membershipLinks in the <script> at the bottom
   ============================================================================
 -->
 <html lang="en">
@@ -310,12 +312,73 @@
     }
  
     /* ==========================================================================
-       8 · BOOKING EMBED
+       8 · MEMBERSHIP TIERS
+       ========================================================================== */
+    .tier-card {
+      position: relative; display: flex; flex-direction: column; gap: 2rem;
+      padding: 1.75rem; border-radius: 1.75rem;
+      background: #ffffff; border: 1px solid #e5e5e5; color: #0a0a0a;
+      transition: transform 0.6s var(--ease), border-color 0.6s var(--ease), box-shadow 0.6s var(--ease);
+    }
+    @media (min-width: 1024px) { .tier-card { padding: 2.25rem; } }
+    .tier-card:focus-within { transform: translateY(-6px); border-color: #0a0a0a; }
+    @media (hover: hover) {
+      .tier-card:hover { transform: translateY(-6px); border-color: #0a0a0a; box-shadow: 0 30px 60px -32px rgba(0, 0, 0, 0.35); }
+    }
+
+    .tier-head  { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+    .tier-icon svg { width: 1.25rem; height: 1.25rem; }
+    .tier-label { font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #737373; }
+    .tier-name  { margin-top: 0.75rem; font-size: 1.75rem; font-weight: 600; letter-spacing: -0.035em; line-height: 1; }
+    .tier-icon  {
+      display: grid; place-items: center; width: 2.75rem; height: 2.75rem; flex-shrink: 0; border-radius: 9999px;
+      border: 1px solid #e5e5e5; color: #0a0a0a;
+      transition: background-color 0.6s var(--ease), color 0.6s var(--ease), border-color 0.6s var(--ease);
+    }
+    .tier-card:hover .tier-icon { background: #0a0a0a; color: #ffffff; border-color: #0a0a0a; }
+
+    .tier-price  { display: flex; align-items: baseline; gap: 0.4rem; padding-bottom: 1.5rem; border-bottom: 1px solid #e5e5e5; }
+    .tier-amount { font-size: clamp(2rem, 3.4vw, 2.5rem); font-weight: 600; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+    .tier-period { font-size: 0.875rem; color: #737373; }
+
+    .tier-perks { display: grid; margin: 0; padding: 0; list-style: none; gap: 0.9rem; font-size: 0.9375rem; line-height: 1.45; color: #404040; }
+    .tier-perks li { display: flex; align-items: flex-start; gap: 0.75rem; }
+    .tier-perks svg { width: 1rem; height: 1rem; margin-top: 0.2rem; flex-shrink: 0; color: #0a0a0a; }
+
+    .btn-tier {
+      margin-top: auto; display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+      box-sizing: border-box; width: 100%; padding: 0.95rem 1.5rem; border-radius: 9999px; text-decoration: none;
+      border: 1px solid #0a0a0a; background: transparent; color: #0a0a0a;
+      font-size: 0.9375rem; font-weight: 500;
+      transition: background-color 0.5s var(--ease), color 0.5s var(--ease), border-color 0.5s var(--ease);
+    }
+    .btn-tier svg { width: 1rem; height: 1rem; transition: transform 0.5s var(--ease); }
+    .btn-tier:hover { background: #0a0a0a; color: #ffffff; }
+    .btn-tier:hover svg { transform: translateX(3px); }
+
+    /* Featured (Platina / VIP) card — inverted */
+    .tier-card--featured { background: #0a0a0a; border-color: #0a0a0a; color: #ffffff; }
+    .tier-card--featured:focus-within { border-color: #525252; }
+    @media (hover: hover) {
+      .tier-card--featured:hover { border-color: #525252; box-shadow: 0 34px 70px -30px rgba(0, 0, 0, 0.6); }
+    }
+    .tier-card--featured .tier-label,
+    .tier-card--featured .tier-period { color: #a3a3a3; }
+    .tier-card--featured .tier-icon  { border-color: #404040; color: #ffffff; }
+    .tier-card--featured:hover .tier-icon { background: #ffffff; color: #0a0a0a; border-color: #ffffff; }
+    .tier-card--featured .tier-price { border-color: #262626; }
+    .tier-card--featured .tier-perks { color: #d4d4d4; }
+    .tier-card--featured .tier-perks svg { color: #ffffff; }
+    .tier-card--featured .btn-tier { background: #ffffff; color: #0a0a0a; border-color: #ffffff; }
+    .tier-card--featured .btn-tier:hover { background: #d4d4d4; border-color: #d4d4d4; }
+
+    /* ==========================================================================
+       9 · BOOKING EMBED
        ========================================================================== */
     .calendly-frame { display: block; width: 100%; height: 760px; border: 0; border-radius: 1rem; }
- 
+
     /* ==========================================================================
-       9 · REDUCED MOTION
+       10 · REDUCED MOTION
        ========================================================================== */
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -351,6 +414,7 @@
         <li><a href="#home"    class="nav-link" data-nav-link>Home</a></li>
         <li><a href="#about"   class="nav-link" data-nav-link>About</a></li>
         <li><a href="#gallery" class="nav-link" data-nav-link>Gallery</a></li>
+        <li><a href="#membership" class="nav-link" data-nav-link>Membership</a></li>
         <li><a href="#booking" class="nav-cta">Booking</a></li>
       </ul>
  
@@ -368,10 +432,11 @@
         <li class="stagger" style="--i:0"><a href="#home"    class="mobile-link">Home</a></li>
         <li class="stagger" style="--i:1"><a href="#about"   class="mobile-link">About</a></li>
         <li class="stagger" style="--i:2"><a href="#gallery" class="mobile-link">Gallery</a></li>
-        <li class="stagger" style="--i:3"><a href="#booking" class="mobile-link">Booking</a></li>
+        <li class="stagger" style="--i:3"><a href="#membership" class="mobile-link">Membership</a></li>
+        <li class="stagger" style="--i:4"><a href="#booking" class="mobile-link">Booking</a></li>
       </ul>
- 
-      <div class="stagger flex items-end justify-between border-t border-neutral-200 pt-6 text-sm text-neutral-500" style="--i:4">
+
+      <div class="stagger flex items-end justify-between border-t border-neutral-200 pt-6 text-sm text-neutral-500" style="--i:5">
         <p>Private home studio<br />By appointment only</p>
         <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" class="social" aria-label="Instagram">
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -645,7 +710,116 @@
     </section>
  
     <!-- ====================================================================
-         4 · BOOKING ("Időpontfoglalás")
+         4 · MEMBERSHIP / SUPPORT ("Tagság / Támogatás")
+         Three tiers. EDIT: prices below, payment links in CONFIG.membershipLinks
+         (bottom of the file). Until a link is set, "Támogatom" opens Instagram.
+         ==================================================================== -->
+    <section id="membership" class="bg-neutral-50 py-24 sm:py-32 lg:py-40">
+      <div class="mx-auto max-w-6xl px-5 sm:px-8">
+
+        <header class="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
+          <div data-reveal>
+            <p class="eyebrow">03 &mdash; Membership &middot; <span lang="hu">Tags&aacute;g / T&aacute;mogat&aacute;s</span></p>
+            <h2 class="section-title mt-5" lang="hu">T&aacute;mogasd a st&uacute;di&oacute;t.<br /> <span class="text-neutral-500">A vend&eacute;gl&aacute;t&aacute;s rajtam.</span></h2>
+          </div>
+          <p data-reveal lang="hu" class="max-w-xs text-sm leading-relaxed text-neutral-500" style="--d:100ms">
+            Havi t&aacute;mogat&aacute;sod&eacute;rt cser&eacute;be minden hajv&aacute;g&aacute;sn&aacute;l v&aacute;r egy kis extra &mdash; k&aacute;v&eacute;, s&ouml;r vagy a teljes VIP &eacute;lm&eacute;ny.
+          </p>
+        </header>
+
+        <ul class="mt-12 grid gap-4 md:grid-cols-3 lg:mt-16 lg:gap-6" lang="hu">
+
+          <!-- Tier 1 · Kávé -->
+          <li data-reveal class="flex">
+            <div class="tier-card w-full">
+            <div class="tier-head">
+              <div>
+                <p class="tier-label">01 &middot; Alap szint</p>
+                <h3 class="tier-name">K&aacute;v&eacute;</h3>
+              </div>
+              <span class="tier-icon" aria-hidden="true">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z" /><path d="M16 11h1.5a2.5 2.5 0 0 1 0 5H16" /><path d="M8 3.5v2.5M12 3.5v2.5" /></svg>
+              </span>
+            </div>
+
+            <p class="tier-price"><span class="tier-amount">1&nbsp;500&nbsp;Ft</span> <span class="tier-period">/ h&oacute;</span></p>
+
+            <ul class="tier-perks">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Egy friss k&aacute;v&eacute; minden hajv&aacute;g&aacute;s alatt</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>T&aacute;mogatod az oldal &eacute;s a st&uacute;di&oacute; m&#369;k&ouml;d&eacute;s&eacute;t</li>
+            </ul>
+
+            <a href="https://www.instagram.com/gyurkaa_/" target="_blank" rel="noopener noreferrer" class="btn-tier" data-tier="coffee">
+              T&aacute;mogatom
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </a>
+            </div>
+          </li>
+
+          <!-- Tier 2 · Sör -->
+          <li data-reveal class="flex" style="--d:100ms">
+            <div class="tier-card w-full">
+            <div class="tier-head">
+              <div>
+                <p class="tier-label">02 &middot; K&ouml;z&eacute;ps&#337; szint</p>
+                <h3 class="tier-name">S&ouml;r</h3>
+              </div>
+              <span class="tier-icon" aria-hidden="true">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h10v10.5A1.5 1.5 0 0 1 13.5 20h-7A1.5 1.5 0 0 1 5 18.5V8z" /><path d="M15 10.5h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2" /><path d="M5 8a2.5 2.5 0 0 1 2.6-3 3 3 0 0 1 4.8 0A2.5 2.5 0 0 1 15 8" /><path d="M8.5 11v6M11.5 11v6" /></svg>
+              </span>
+            </div>
+
+            <p class="tier-price"><span class="tier-amount">3&nbsp;000&nbsp;Ft</span> <span class="tier-period">/ h&oacute;</span></p>
+
+            <ul class="tier-perks">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Egy hideg s&ouml;r hajv&aacute;g&aacute;s k&ouml;zben</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Egy kicsit nagyobb t&aacute;mogat&aacute;s a st&uacute;di&oacute;nak</li>
+            </ul>
+
+            <a href="https://www.instagram.com/gyurkaa_/" target="_blank" rel="noopener noreferrer" class="btn-tier" data-tier="beer">
+              T&aacute;mogatom
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </a>
+            </div>
+          </li>
+
+          <!-- Tier 3 · Platina (VIP) — inverted, featured card -->
+          <li data-reveal class="flex" style="--d:200ms">
+            <div class="tier-card tier-card--featured on-dark w-full">
+            <div class="tier-head">
+              <div>
+                <p class="tier-label">03 &middot; Platina szint</p>
+                <h3 class="tier-name">VIP</h3>
+              </div>
+              <span class="tier-icon" aria-hidden="true">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 5h12l-1.7 13.6a1.6 1.6 0 0 1-1.6 1.4H9.3a1.6 1.6 0 0 1-1.6-1.4L6 5z" /><path d="M6.7 10.5h10.6" /></svg>
+              </span>
+            </div>
+
+            <p class="tier-price"><span class="tier-amount">5&nbsp;000&nbsp;Ft</span> <span class="tier-period">/ h&oacute;</span></p>
+
+            <ul class="tier-perks">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>2 hideg s&ouml;r az id&#337;pontod alatt</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Plusz egy feles a h&aacute;z aj&aacute;nd&eacute;kak&eacute;nt</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>A legnagyobb t&aacute;mogat&aacute;s &mdash; k&ouml;sz&ouml;n&ouml;m!</li>
+            </ul>
+
+            <a href="https://www.instagram.com/gyurkaa_/" target="_blank" rel="noopener noreferrer" class="btn-tier" data-tier="vip">
+              T&aacute;mogatom
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </a>
+            </div>
+          </li>
+        </ul>
+
+        <p data-reveal lang="hu" class="mt-8 text-xs leading-relaxed text-neutral-500">
+          A tags&aacute;g b&aacute;rmikor lemondhat&oacute;. Alkoholos aj&aacute;nd&eacute;k kiz&aacute;r&oacute;lag 18 &eacute;ven fel&uuml;li vend&eacute;geknek &mdash; helyette sz&iacute;vesen adok &uuml;d&iacute;t&#337;t vagy k&aacute;v&eacute;t.
+        </p>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         5 · BOOKING ("Időpontfoglalás")
          ==================================================================== -->
     <section id="booking" class="relative isolate overflow-hidden bg-neutral-950 py-24 text-white sm:py-32 lg:py-40">
       <div class="booking-glow absolute inset-0 -z-10" aria-hidden="true"></div>
@@ -656,7 +830,7 @@
           <!-- Left: reassurance copy -->
           <div class="on-dark lg:col-span-5">
             <div data-reveal>
-              <p class="eyebrow">03 &mdash; Booking &middot; <span lang="hu">Id&#337;pontfoglal&aacute;s</span></p>
+              <p class="eyebrow">04 &mdash; Booking &middot; <span lang="hu">Id&#337;pontfoglal&aacute;s</span></p>
               <h2 class="section-title mt-5">Find a time<br /> that suits you.</h2>
               <p class="mt-6 max-w-sm text-base leading-relaxed text-neutral-400 sm:text-lg">
                 Choose a service and a slot in the calendar. You&rsquo;ll get a confirmation by email &mdash; including the studio address.
@@ -810,6 +984,15 @@
         // Paste your Calendly scheduling link to replace the booking placeholder.
         // Example: 'https://calendly.com/your-name/haircut'
         calendlyUrl: '',
+
+        // Payment / subscription links for the "Támogatom" buttons
+        // (e.g. Stripe Payment Links, Revolut, Patreon). Leave empty to keep
+        // the Instagram fallback.
+        membershipLinks: {
+          coffee: '',   // Alap szint  · Kávé
+          beer:   '',   // Középső szint · Sör
+          vip:    '',   // Platina szint · VIP
+        },
       };
  
       /* ======================================================================
@@ -1164,6 +1347,20 @@
       }
  
       /* ======================================================================
+         9 · MEMBERSHIP — point each "Támogatom" button at its payment link
+         ====================================================================== */
+      function initMembership() {
+        const links = CONFIG.membershipLinks || {};
+        $$('[data-tier]').forEach((btn) => {
+          const url = (links[btn.dataset.tier] || '').trim();
+          if (!url) return;
+          btn.href = url;
+          btn.target = '_blank';
+          btn.rel = 'noopener noreferrer';
+        });
+      }
+
+      /* ======================================================================
          INIT
          ====================================================================== */
       function init() {
@@ -1175,7 +1372,8 @@
         initImages();
         initLightbox();
         initBooking();
- 
+        initMembership();
+
         const year = $('#year');
         if (year) year.textContent = String(new Date().getFullYear());
       }
