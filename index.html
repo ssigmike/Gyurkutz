@@ -19,6 +19,8 @@
                        In the <style> block set --photo-filter: none for colour.
   8. Membership ...... section #membership -> tier prices; payment links in
                        CONFIG.membershipLinks in the <script> at the bottom
+  9. Our Story ....... section #story -> put story-01…05 .jpg and
+                       story-06-car.mp4 next to index.html (see EDIT notes)
   ============================================================================
 -->
 <html lang="en">
@@ -373,12 +375,47 @@
     .tier-card--featured .btn-tier:hover { background: #d4d4d4; border-color: #d4d4d4; }
 
     /* ==========================================================================
-       9 · BOOKING EMBED
+       9 · OUR STORY — timeline, media frames, letter
+       ========================================================================== */
+    .story-timeline { position: relative; list-style: none; padding: 0; }
+    .story-timeline::before {
+      content: ""; position: absolute; left: 0.3125rem; top: 0.6rem; bottom: 0; width: 1px;
+      background: linear-gradient(to bottom, #d4d4d4 85%, rgba(212, 212, 212, 0));
+    }
+    .story-event { position: relative; padding-left: 2.25rem; }
+    @media (min-width: 768px) { .story-event { padding-left: 3.5rem; } }
+    .story-dot {
+      position: absolute; left: 0; top: 0.35rem; width: 0.6875rem; height: 0.6875rem; border-radius: 9999px;
+      background: #fafafa; border: 1px solid #0a0a0a; transition: background-color 0.5s var(--ease), transform 0.5s var(--ease);
+    }
+    .story-event:hover .story-dot { background: #0a0a0a; transform: scale(1.2); }
+    .story-date { display: block; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #737373; font-variant-numeric: tabular-nums; }
+
+    .media-frame { position: relative; display: block; margin: 0; overflow: hidden; border-radius: 1.25rem; background: #e5e5e5; isolation: isolate; }
+    .media-label {
+      position: absolute; inset: 0; z-index: -1; display: grid; place-items: center; padding: 1rem; text-align: center;
+      font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #8a8a8a;
+    }
+    .media-frame video { background: #0a0a0a; }
+    .is-broken video { display: none; }
+
+    .story-caption { display: flex; gap: 1rem; margin-top: 1.1rem; max-width: 34rem; font-size: 0.875rem; line-height: 1.65; color: #525252; }
+    .story-index { flex-shrink: 0; padding-top: 0.1rem; font-size: 0.6875rem; letter-spacing: 0.12em; color: #a3a3a3; font-variant-numeric: tabular-nums; }
+
+    .story-letter { max-width: 42rem; }
+    .story-letter p {
+      font-size: clamp(1.1875rem, 2.1vw, 1.5rem); line-height: 1.7; letter-spacing: -0.012em; color: #262626;
+    }
+    .story-letter p + p { margin-top: 2.5rem; }
+    @media (min-width: 1024px) { .story-letter p + p { margin-top: 3.25rem; } }
+
+    /* ==========================================================================
+       10 · BOOKING EMBED
        ========================================================================== */
     .calendly-frame { display: block; width: 100%; height: 760px; border: 0; border-radius: 1rem; }
 
     /* ==========================================================================
-       10 · REDUCED MOTION
+       11 · REDUCED MOTION
        ========================================================================== */
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -415,6 +452,7 @@
         <li><a href="#about"   class="nav-link" data-nav-link>About</a></li>
         <li><a href="#gallery" class="nav-link" data-nav-link>Gallery</a></li>
         <li><a href="#membership" class="nav-link" data-nav-link>Membership</a></li>
+        <li><a href="#story" class="nav-link" data-nav-link>Story</a></li>
         <li><a href="#booking" class="nav-cta">Booking</a></li>
       </ul>
  
@@ -434,9 +472,10 @@
         <li class="stagger" style="--i:2"><a href="#gallery" class="mobile-link">Gallery</a></li>
         <li class="stagger" style="--i:3"><a href="#membership" class="mobile-link">Membership</a></li>
         <li class="stagger" style="--i:4"><a href="#booking" class="mobile-link">Booking</a></li>
+        <li class="stagger" style="--i:5"><a href="#story" class="mobile-link">Story</a></li>
       </ul>
 
-      <div class="stagger flex items-end justify-between border-t border-neutral-200 pt-6 text-sm text-neutral-500" style="--i:5">
+      <div class="stagger flex items-end justify-between border-t border-neutral-200 pt-6 text-sm text-neutral-500" style="--i:6">
         <p>Private home studio<br />By appointment only</p>
         <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" class="social" aria-label="Instagram">
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -900,6 +939,135 @@
         </div>
       </div>
     </section>
+
+    <!-- ====================================================================
+         6 · OUR STORY ("Miért készült ez az oldal?")
+         Timeline → memory grid → the friendship.
+         EDIT: drop your photos / video next to index.html using the file
+         names below (or change the src). Until a file exists, its frame
+         shows a quiet grey placeholder with a label.
+         ==================================================================== -->
+    <section id="story" class="bg-neutral-50 py-24 sm:py-32 lg:py-40">
+      <div class="mx-auto max-w-6xl px-5 sm:px-8">
+
+        <header data-reveal class="max-w-2xl">
+          <p class="eyebrow">05 &mdash; Our Story &middot; <span lang="hu">Mi&eacute;rt k&eacute;sz&uuml;lt ez az oldal?</span></p>
+          <h2 class="section-title mt-5">Our Story.</h2>
+          <p class="mt-6 text-base leading-relaxed text-neutral-500 sm:text-lg">The story behind the Beerbershop.</p>
+        </header>
+
+        <!-- Timeline -->
+        <ol class="story-timeline mt-16 space-y-20 lg:mt-24 lg:space-y-28">
+
+          <li class="story-event">
+            <span class="story-dot" aria-hidden="true"></span>
+            <div class="grid gap-8 md:grid-cols-12 md:gap-10 lg:gap-16">
+              <div data-reveal class="md:col-span-6 md:pt-1">
+                <time class="story-date" datetime="2025-09-09">September 9, 2025</time>
+                <h3 class="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">The First Haircut</h3>
+                <p class="mt-5 max-w-md text-base leading-relaxed text-neutral-600">
+                  Mike promised Gyurka he would be his very first client. And so it happened &mdash; after a year of planning and learning, we &ldquo;made the cut.&rdquo; It turned out really well for a first try, though it definitely helped that on Mike&rsquo;s blonde hair, the choppy fade transitions weren&rsquo;t as visible.
+                </p>
+              </div>
+              <figure data-reveal data-img-wrap class="media-frame aspect-[4/3] md:col-span-6" style="--d:120ms">
+                <span class="media-label" aria-hidden="true">Image 1 &middot; The first haircut</span>
+                <!-- EDIT: Image 1 -->
+                <img src="firstcut.jpg" alt="Mike in the chair for Gyurka's very first haircut"
+                     class="photo img-fade absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+              </figure>
+            </div>
+          </li>
+
+          <li class="story-event">
+            <span class="story-dot" aria-hidden="true"></span>
+            <div class="grid gap-8 md:grid-cols-12 md:gap-10 lg:gap-16">
+              <div data-reveal class="md:col-span-6 md:pt-1">
+                <time class="story-date" datetime="2025-09-17">September 17, 2025</time>
+                <h3 class="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">The Planning</h3>
+                <p class="mt-5 max-w-md text-base leading-relaxed text-neutral-600">
+                  Mike started designing the website and the logo just for fun. Later, on November 8, 2026, after moving to Budapest to continue his university studies, developing this website for Gyurka became a way to stay connected to his distant friend.
+                </p>
+              </div>
+              <figure data-reveal data-img-wrap class="media-frame aspect-[4/3] md:col-span-6" style="--d:120ms">
+                <span class="media-label" aria-hidden="true">Image 2 &middot; The planning</span>
+                <!-- EDIT: Image 2 -->
+                <img src="webplan.jpg" alt="Early sketches of the website and logo"
+                     class="photo img-fade absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+              </figure>
+            </div>
+          </li>
+        </ol>
+
+        <!-- Memory grid — asymmetrical on desktop, one column on phones -->
+        <div class="mt-28 lg:mt-40">
+          <p data-reveal class="eyebrow">Memories</p>
+
+          <div class="mt-10 grid gap-x-6 gap-y-14 md:grid-cols-12 md:items-start lg:gap-x-10 lg:gap-y-20">
+
+            <figure data-reveal class="md:col-span-7">
+              <div data-img-wrap class="media-frame aspect-[4/3]">
+                <span class="media-label" aria-hidden="true">Image 3 &middot; B&eacute;la the dog</span>
+                <img src="beladog.jpg" alt="Mike and Gyurka with the statue of B&eacute;la the dog"
+                     class="photo img-fade absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+              </div>
+              <figcaption class="story-caption"><span class="story-index">01</span>Here we are with the famous statue of B&eacute;la the dog, whose nose we often pet during our late-night outings.</figcaption>
+            </figure>
+
+            <figure data-reveal class="md:col-span-5 md:mt-28" style="--d:100ms">
+              <div data-img-wrap class="media-frame aspect-[4/5]">
+                <span class="media-label" aria-hidden="true">Image 4 &middot; Easter sprinkling</span>
+                <img src="locsolas.jpg" alt="The gang during the Easter sprinkling tradition"
+                     class="photo img-fade absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+              </div>
+              <figcaption class="story-caption"><span class="story-index">02</span>Taken during the gang&rsquo;s infamous Easter sprinkling tradition. Though it was a bit drier than in previous years and we didn&rsquo;t run into Denis Musimbe this time, the atmosphere was fantastic, especially while chilling under the studio.</figcaption>
+            </figure>
+
+            <figure data-reveal class="md:col-span-5">
+              <div data-img-wrap class="media-frame aspect-[4/5]">
+                <span class="media-label" aria-hidden="true">Image 5 &middot; Bean goulash</span>
+                <img src="goulash.jpg" alt="Bean goulash bubbling in a pot"
+                     class="photo img-fade absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+              </div>
+              <figcaption class="story-caption"><span class="story-index">03</span>A majestic bean goulash bubbling away, as we get lost exploring the ecstasy of flavors. Photo by Tomi &mdash; the mastermind behind the name &lsquo;Beerbershop&rsquo;, the grandmaster of easing the pre-haircut tension, and the proud, glorious owner of &lsquo;The Terrace&rsquo;.</figcaption>
+            </figure>
+
+            <figure data-reveal class="md:col-span-7 md:mt-28" style="--d:100ms">
+              <div data-img-wrap class="media-frame aspect-video">
+                <span class="media-label" aria-hidden="true">Video &middot; Cs&ouml;szke&rsquo;s car</span>
+                <!-- EDIT: video file (add poster="story-06-car.jpg" for a cover frame) -->
+                <video class="photo img-fade absolute inset-0 h-full w-full object-cover" data-story-video
+                       controls playsinline preload="metadata" aria-label="The Gyurkits boys launching Cs&ouml;szke&rsquo;s car">
+                  <source src="Video.mp4" type="video/mp4" />
+                </video>
+              </div>
+              <figcaption class="story-caption"><span class="story-index">04</span>The Gyurkits boys launching Cs&ouml;szke&rsquo;s car. The video speaks for itself.</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <!-- The Friendship — the emotional core: big type, lots of air -->
+        <article class="mt-32 border-t border-neutral-300 pt-16 lg:mt-48 lg:pt-24">
+          <div class="grid gap-10 lg:grid-cols-12 lg:gap-16">
+            <header data-reveal class="lg:sticky lg:top-28 lg:col-span-4 lg:self-start">
+              <p class="eyebrow">Baja &mdash; Budapest</p>
+              <h3 class="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">The Friendship.</h3>
+            </header>
+
+            <div class="story-letter lg:col-span-8">
+              <p data-reveal>
+                Where else could it have started but on the waterfront in Baja? Our parents often organized summer beach days, brought together by our brothers&rsquo; shared love for football. When Mike was born, we were probably already meeting on the beach. Obviously, our dads also had a great time at these gatherings, and that good mood rubbed off on us. The 40-degree sun, the scorching sand, and the cold water. All you need is a pint of beer, a football, a few friends, and you wish it would never end.
+              </p>
+              <p data-reveal>
+                Among Mike&rsquo;s very first childhood memories, Gyurka is in every single one. The earliest memory on the banks of the Sugovica: Gyurka warning Mike not to pop the bag of chips because the bottom would tear and spill all over the ground. Mike didn&rsquo;t believe him. Gyurka was right.
+              </p>
+              <p data-reveal>
+                Years passed, and the few pictures above cannot even show a fraction of the friendship we share. Today, there are hundreds of kilometers between Mike and Gyurka. The goodbye was hard, and although we didn&rsquo;t plan for it, we finally shared a sad, tear-soaked farewell. The lack of our usual meetups inspired Mike to build this website, making him feel just a little bit closer to his dear friend. I hope you like it.
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
   </main>
  
   <!-- ======================================================================
@@ -1361,6 +1529,25 @@
       }
 
       /* ======================================================================
+         10 · STORY VIDEO — fade in when ready, placeholder if the file is missing
+         ====================================================================== */
+      function initVideos() {
+        $$('video[data-story-video]').forEach((video) => {
+          const wrap = video.closest('[data-img-wrap]');
+          const ok  = () => video.classList.add('is-loaded');
+          const bad = () => { if (wrap) wrap.classList.add('is-broken'); };
+          const sources = $$('source', video);
+
+          if (video.readyState >= 1) ok();
+          else video.addEventListener('loadedmetadata', ok, { once: true });
+
+          if (sources.length) sources[sources.length - 1].addEventListener('error', bad, { once: true });
+          else video.addEventListener('error', bad, { once: true });
+          if (video.networkState === 3) bad(); // NETWORK_NO_SOURCE
+        });
+      }
+
+      /* ======================================================================
          INIT
          ====================================================================== */
       function init() {
@@ -1373,6 +1560,7 @@
         initLightbox();
         initBooking();
         initMembership();
+        initVideos();
 
         const year = $('#year');
         if (year) year.textContent = String(new Date().getFullYear());
