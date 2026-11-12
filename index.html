@@ -19,8 +19,10 @@
                        In the <style> block set --photo-filter: none for colour.
   8. Membership ...... section #membership -> tier prices; payment links in
                        CONFIG.membershipLinks in the <script> at the bottom
-  9. Our Story ....... section #story -> put story-01…05 .jpg and
-                       story-06-car.mp4 next to index.html (see EDIT notes)
+  9. Our Story ....... section #story -> story photos sit next to index.html
+                       (file names in the EDIT notes inside the section)
+ 10. Supporters ...... section #supporters -> copy a supporter card and paste
+                       it above the "join" card (instructions inside)
   ============================================================================
 -->
 <html lang="en">
@@ -35,9 +37,9 @@
  
   <!-- Open Graph (link previews) -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Linea &mdash; Hair Studio" />
+  <meta property="og:title" content="Gyurkutz. &mdash; Hair Studio" />
   <meta property="og:description" content="Precision haircuts in a calm, private home studio. Book your appointment online." />
-  <meta property="og:image" content="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" />
+  <meta property="og:image" content="IMG_0350" />
  
   <!-- Inline favicon: black tile with a white "L" -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='9'%20fill='black'/%3E%3Cpath%20d='M12%208v16h9'%20fill='none'%20stroke='white'%20stroke-width='3'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E" />
@@ -396,8 +398,6 @@
       position: absolute; inset: 0; z-index: -1; display: grid; place-items: center; padding: 1rem; text-align: center;
       font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #8a8a8a;
     }
-    .media-frame video { background: #0a0a0a; }
-    .is-broken video { display: none; }
 
     .story-caption { display: flex; gap: 1rem; margin-top: 1.1rem; max-width: 34rem; font-size: 0.875rem; line-height: 1.65; color: #525252; }
     .story-index { flex-shrink: 0; padding-top: 0.1rem; font-size: 0.6875rem; letter-spacing: 0.12em; color: #a3a3a3; font-variant-numeric: tabular-nums; }
@@ -410,12 +410,78 @@
     @media (min-width: 1024px) { .story-letter p + p { margin-top: 3.25rem; } }
 
     /* ==========================================================================
-       10 · BOOKING EMBED
+       10 · SUPPORTERS — small cards, laid out by the Tailwind grid in the markup
        ========================================================================== */
-    .calendly-frame { display: block; width: 100%; height: 760px; border: 0; border-radius: 1rem; }
+    .supporter-card {
+      display: grid; grid-template-columns: auto 1fr; grid-template-areas: "avatar badge" "name name";
+      align-items: center; column-gap: 0.75rem; row-gap: 1.25rem; min-width: 0;
+      padding: 1rem; border-radius: 1.25rem; border: 1px solid #e5e5e5; background: #ffffff;
+      transition: border-color 0.5s var(--ease), transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+    }
+    @media (min-width: 640px) { .supporter-card { padding: 1.25rem; } }
+    @media (hover: hover) {
+      .supporter-card:hover { border-color: #0a0a0a; transform: translateY(-3px); box-shadow: 0 18px 40px -28px rgba(0, 0, 0, 0.35); }
+    }
+    .supporter-avatar {
+      grid-area: avatar; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 9999px;
+      background: #f5f5f5; color: #0a0a0a; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.06em;
+    }
+    .supporter-badge {
+      grid-area: badge; justify-self: end; display: inline-flex; align-items: center;
+      padding: 0.35rem 0.6rem; border-radius: 9999px; border: 1px solid #d4d4d4; background: #ffffff; color: #525252;
+      font-size: 0.625rem; font-weight: 500; line-height: 1; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap;
+    }
+    .supporter-name {
+      grid-area: name; margin: 0; font-size: 0.9375rem; font-weight: 500; line-height: 1.3;
+      letter-spacing: -0.01em; color: #0a0a0a; overflow-wrap: anywhere;
+    }
+    /* Tier styling comes from data-level on the card: coffee (outline) · beer (grey) · vip (black) */
+    .supporter-card[data-level="dev"] .supporter-badge { background: #5ce1b2; border-color: #5ce1b2; color: #ffffff; }
+    .supporter-card[data-level="dev"]  .supporter-avatar { background: #5ce1b2; color: #ffffff; }
+
+    .supporter-card[data-level="boss"] .supporter-badge { background: #4f8ae9; border-color: #4f8ae9; color: #ffffff; }
+    .supporter-card[data-level="boss"]  .supporter-avatar { background: #4f8ae9; color: #ffffff; }
+
+    
+
+    .supporter-card[data-level="beer"] .supporter-badge { background: #e5e5e5; border-color: #e5e5e5; color: #262626; }
+
+    .supporter-card[data-level="vip"]  .supporter-badge { background: #0a0a0a; border-color: #0a0a0a; color: #ffffff; }
+    .supporter-card[data-level="vip"]  .supporter-avatar { background: #0a0a0a; color: #ffffff; }
+
+    /* "Join" card — always the last tile in the grid */
+    .supporter-join {
+      display: flex; flex-direction: column; justify-content: space-between; gap: 1.25rem;
+      padding: 1rem; border-radius: 1.25rem; border: 1px dashed #d4d4d4; color: #737373; text-decoration: none;
+      transition: border-color 0.5s var(--ease), color 0.5s var(--ease);
+    }
+    @media (min-width: 640px) { .supporter-join { padding: 1.25rem; } }
+    .supporter-join:hover { border-style: solid; border-color: #0a0a0a; color: #0a0a0a; }
+    .supporter-join__icon {
+      display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 9999px; border: 1px solid currentColor;
+      transition: background-color 0.5s var(--ease), color 0.5s var(--ease);
+    }
+    .supporter-join__icon svg { width: 1rem; height: 1rem; }
+    .supporter-join:hover .supporter-join__icon { background: #0a0a0a; border-color: #0a0a0a; color: #ffffff; }
+    .supporter-join__text { font-size: 0.9375rem; font-weight: 500; line-height: 1.3; letter-spacing: -0.01em; }
 
     /* ==========================================================================
-       11 · REDUCED MOTION
+       11 · BOOKING EMBED — no scroll trap on phones
+       The iframe is tall enough to show the whole widget, so it never gets its
+       own scrollbar and a finger on the calendar scrolls the page. initBooking()
+       then sets --embed-h to the exact height Calendly reports, which removes
+       any leftover empty space and grows the frame on longer steps.
+       ========================================================================== */
+    #calendly-embed iframe {
+      display: block; width: 100%; border: 0;
+      height: var(--embed-h, 1150px);
+      transition: height 0.45s var(--ease);
+    }
+    @media (min-width: 640px)  { #calendly-embed iframe { height: var(--embed-h, 1050px); } }
+    @media (min-width: 1024px) { #calendly-embed iframe { height: var(--embed-h, 950px); } }
+
+    /* ==========================================================================
+       12 · REDUCED MOTION
        ========================================================================== */
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -477,7 +543,7 @@
 
       <div class="stagger flex items-end justify-between border-t border-neutral-200 pt-6 text-sm text-neutral-500" style="--i:6">
         <p>Private home studio<br />By appointment only</p>
-        <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" class="social" aria-label="Instagram">
+        <a href="https://instagram.com/gyurkaa_" target="_blank" rel="noopener noreferrer" class="social" aria-label="Instagram">
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect x="3" y="3" width="18" height="18" rx="5" />
             <circle cx="12" cy="12" r="4" />
@@ -781,7 +847,7 @@
               </span>
             </div>
 
-            <p class="tier-price"><span class="tier-amount">1&nbsp;500&nbsp;Ft</span> <span class="tier-period">/ h&oacute;</span></p>
+            <p class="tier-price"><span class="tier-amount">500&nbsp;Ft</span> <span class="tier-period">/ h&oacute;</span></p>
 
             <ul class="tier-perks">
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Egy friss k&aacute;v&eacute; minden hajv&aacute;g&aacute;s alatt</li>
@@ -808,7 +874,7 @@
               </span>
             </div>
 
-            <p class="tier-price"><span class="tier-amount">3&nbsp;000&nbsp;Ft</span> <span class="tier-period">/ h&oacute;</span></p>
+            <p class="tier-price"><span class="tier-amount">1&nbsp;000&nbsp;Ft</span> <span class="tier-period">/ h&oacute;</span></p>
 
             <ul class="tier-perks">
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Egy hideg s&ouml;r hajv&aacute;g&aacute;s k&ouml;zben</li>
@@ -835,7 +901,7 @@
               </span>
             </div>
 
-            <p class="tier-price"><span class="tier-amount">5&nbsp;000&nbsp;Ft</span> <span class="tier-period">/ h&oacute;</span></p>
+            <p class="tier-price"><span class="tier-amount">2&nbsp;000&nbsp;Ft</span> <span class="tier-period">/ h&oacute;</span></p>
 
             <ul class="tier-perks">
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>2 hideg s&ouml;r az id&#337;pontod alatt</li>
@@ -858,6 +924,116 @@
     </section>
 
     <!-- ====================================================================
+         4b · SUPPORTERS ("Támogatóink")
+
+         HOW TO ADD A NEW SUPPORTER
+           1. Copy one of the three templates in the comment at the top of
+              the grid (VIP / Sör / Kávé).
+           2. Paste it ABOVE the "JOIN" card (the last tile in the grid).
+           3. Replace "Név" with the supporter's name.
+         The grid, the initials circle and the supporter count update on
+         their own. To remove someone, delete their <div>…</div> block.
+         ==================================================================== -->
+    <section id="supporters" class="bg-white py-20 sm:py-24 lg:py-32">
+      <div class="mx-auto max-w-6xl px-5 sm:px-8">
+
+        <header class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div data-reveal>
+            <p class="eyebrow">Supporters &middot; <span lang="hu">T&aacute;mogat&oacute;ink</span></p>
+            <h2 class="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl" lang="hu">K&ouml;sz&ouml;nj&uuml;k, hogy itt vagytok.</h2>
+          </div>
+          <div data-reveal lang="hu" class="flex flex-col items-start gap-4 sm:items-end" style="--d:100ms">
+            <!-- The number is counted automatically from the cards below -->
+            <span class="rounded-full border border-neutral-200 px-3 py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-neutral-500">
+              <span data-supporter-count>7</span> t&aacute;mogat&oacute;
+            </span>
+            <p class="max-w-xs text-sm leading-relaxed text-neutral-500 sm:text-right">
+              Nekik k&ouml;sz&ouml;nhet&#337;, hogy a k&aacute;v&eacute; mindig friss, a s&ouml;r pedig mindig hideg.
+            </p>
+          </div>
+        </header>
+
+        <!-- SUPPORTERS GRID · 2 columns on phones, 3 on tablets, 4 on desktop.
+             Cards flow into the next free slot automatically. -->
+        <div id="supporters-grid" data-reveal lang="hu"
+             class="mt-12 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:mt-16 lg:grid-cols-4">
+
+          <!--
+            ┌─ COPY-PASTE TEMPLATES ─ pick one, paste it above the JOIN card ─┐
+
+            VIP · Platina szint
+            <div class="supporter-card" data-supporter data-level="vip">
+              <p class="supporter-name">Név</p>
+              <span class="supporter-badge">VIP</span>
+            </div>
+
+            Sör · Középső szint
+            <div class="supporter-card" data-supporter data-level="beer">
+              <p class="supporter-name">Név</p>
+              <span class="supporter-badge">Sör</span>
+            </div>
+
+            Kávé · Alap szint
+            <div class="supporter-card" data-supporter data-level="coffee">
+              <p class="supporter-name">Név</p>
+              <span class="supporter-badge">Kávé</span>
+            </div>
+
+            └─ Tip: keep VIP supporters first, then Sör, then Kávé. ─────────┘
+          -->
+
+          <!-- EXAMPLE SUPPORTERS · replace these names with the real ones -->
+
+          <!-- Supporter · VIP -->
+           <div class="supporter-card" data-supporter data-level="dev">
+              <p class="supporter-name">mike.</p>
+              <span class="supporter-badge">DEV</span>
+            </div>
+
+          <div class="supporter-card" data-supporter data-level="boss">
+            <p class="supporter-name">Gyurkutz.</p>
+            <span class="supporter-badge">CEO</span>
+          </div>
+
+          <div class="supporter-card" data-supporter data-level="vip">
+            <p class="supporter-name">Koller Dominik</p>
+            <span class="supporter-badge">VIP</span>
+          </div>
+
+          <div class="supporter-card" data-supporter data-level="beer">
+            <p class="supporter-name">asd</p>
+            <span class="supporter-badge">BEER</span>
+          </div>
+
+          <div class="supporter-card" data-supporter data-level="beer">
+            <p class="supporter-name">dsa</p>
+            <span class="supporter-badge">BEER</span>
+          </div>
+
+          <div class="supporter-card" data-supporter data-level="coffee">
+            <p class="supporter-name">Jew</p>
+            <span class="supporter-badge">jew</span>
+          </div>
+
+          
+          
+
+          
+
+          <!-- ▲ PASTE NEW SUPPORTERS ABOVE THIS LINE ▲ -->
+
+          <!-- JOIN CARD · keep this one last -->
+          <a href="#membership" class="supporter-join">
+            <span class="supporter-join__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
+            </span>
+            <span class="supporter-join__text">Legy&eacute;l te is t&aacute;mogat&oacute;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
          5 · BOOKING ("Időpontfoglalás")
          ==================================================================== -->
     <section id="booking" class="relative isolate overflow-hidden bg-neutral-950 py-24 text-white sm:py-32 lg:py-40">
@@ -872,14 +1048,14 @@
               <p class="eyebrow">04 &mdash; Booking &middot; <span lang="hu">Id&#337;pontfoglal&aacute;s</span></p>
               <h2 class="section-title mt-5">Find a time<br /> that suits you.</h2>
               <p class="mt-6 max-w-sm text-base leading-relaxed text-neutral-400 sm:text-lg">
-                Choose a service and a slot in the calendar. You&rsquo;ll get a confirmation by email &mdash; including the studio address.
+                Choose a service and a slot in the calendar. You&rsquo;ll get a confirmation by email.
               </p>
             </div>
  
             <ul data-reveal class="mt-12 space-y-6 text-sm text-neutral-400" style="--d:120ms">
               <li class="flex items-start gap-4">
                 <svg class="mt-0.5 h-5 w-5 shrink-0 text-neutral-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-                <span><span class="block font-medium text-white">30&ndash;75 minutes</span>Depending on the service you choose.</span>
+                <span><span class="block font-medium text-white">60&ndash;75 minutes</span>Depending on the service you choose.</span>
               </li>
               <li class="flex items-start gap-4">
                 <svg class="mt-0.5 h-5 w-5 shrink-0 text-neutral-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
@@ -900,9 +1076,9 @@
           <!-- Right: booking card -->
           <div class="lg:col-span-7">
             <div data-reveal style="--d:150ms"
-                 class="rounded-[2rem] bg-white p-4 text-neutral-900 shadow-[0_40px_120px_-40px_rgba(255,255,255,0.18)] sm:p-6">
+                 class="rounded-[2rem] bg-white p-2 text-neutral-900 shadow-[0_40px_120px_-40px_rgba(255,255,255,0.18)] sm:p-6">
  
-              <div class="flex items-start justify-between gap-6 px-1 pb-5 pt-1 sm:px-2">
+              <div class="flex items-start justify-between gap-6 px-3 pb-4 pt-3 sm:px-2 sm:pb-5 sm:pt-1">
                 <div>
                   <h3 class="text-xl font-semibold tracking-tight sm:text-2xl">Select a suitable time below.</h3>
                   <p class="mt-2 text-sm leading-relaxed text-neutral-500">Pick a service, choose a day, confirm &mdash; it takes under a minute.</p>
@@ -916,13 +1092,14 @@
                      bottom of this file. The placeholder below is removed and a
                      responsive iframe is inserted automatically.
                    Option B: delete #booking-placeholder and paste Calendly's own
-                     inline embed code inside #calendly-embed, for example:
-                       <div class="calendly-inline-widget"
+                     inline embed code inside #calendly-embed, for example
+                     (data-resize="true" keeps it scroll-trap free on phones):
+                       <div class="calendly-inline-widget" data-resize="true"
                             data-url="https://calendly.com/your-name/haircut"
-                            style="min-width:320px;height:700px;"></div>
+                            style="min-width:320px;height:1100px;"></div>
                        <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
                    ============================================================ -->
-              <div id="calendly-embed" class="overflow-hidden rounded-2xl">
+              <div id="calendly-embed" class="overflow-hidden rounded-[1.5rem] sm:rounded-2xl">
                 <div id="booking-placeholder"
                      class="flex min-h-[26rem] flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 px-6 py-14 text-center sm:min-h-[32rem]">
                   <span class="grid h-14 w-14 place-items-center rounded-full border border-neutral-200 bg-white text-neutral-700">
@@ -998,14 +1175,19 @@
           </li>
         </ol>
 
-        <!-- Memory grid — asymmetrical on desktop, one column on phones -->
+        <!-- Memory grid · three photos
+             Desktop: one large photo on the left, two stacked on the right.
+                      The left photo stretches to the exact height of the right
+                      column, so tops and bottoms always line up.
+             Tablet:  large photo full width, the other two side by side.
+             Phone:   one column. -->
         <div class="mt-28 lg:mt-40">
           <p data-reveal class="eyebrow">Memories</p>
 
-          <div class="mt-10 grid gap-x-6 gap-y-14 md:grid-cols-12 md:items-start lg:gap-x-10 lg:gap-y-20">
+          <div class="mt-10 grid gap-x-6 gap-y-14 md:grid-cols-2 lg:grid-cols-12 lg:gap-x-10">
 
-            <figure data-reveal class="md:col-span-7">
-              <div data-img-wrap class="media-frame aspect-[4/3]">
+            <figure data-reveal class="md:col-span-2 lg:col-span-7 lg:flex lg:flex-col">
+              <div data-img-wrap class="media-frame aspect-[4/5] md:aspect-[16/10] lg:aspect-auto lg:min-h-[28rem] lg:flex-1">
                 <span class="media-label" aria-hidden="true">Image 3 &middot; B&eacute;la the dog</span>
                 <img src="beladog.jpg" alt="Mike and Gyurka with the statue of B&eacute;la the dog"
                      class="photo img-fade absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
@@ -1013,8 +1195,10 @@
               <figcaption class="story-caption"><span class="story-index">01</span>Here we are with the famous statue of B&eacute;la the dog, whose nose we often pet during our late-night outings.</figcaption>
             </figure>
 
-            <figure data-reveal class="md:col-span-5 md:mt-28" style="--d:100ms">
-              <div data-img-wrap class="media-frame aspect-[4/5]">
+            <div class="grid gap-x-6 gap-y-14 md:col-span-2 md:grid-cols-2 lg:col-span-5 lg:grid-cols-1 lg:gap-y-16">
+
+            <figure data-reveal style="--d:100ms">
+              <div data-img-wrap class="media-frame aspect-[4/3] lg:aspect-[16/10]">
                 <span class="media-label" aria-hidden="true">Image 4 &middot; Easter sprinkling</span>
                 <img src="locsolas.jpg" alt="The gang during the Easter sprinkling tradition"
                      class="photo img-fade absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
@@ -1022,26 +1206,15 @@
               <figcaption class="story-caption"><span class="story-index">02</span>Taken during the gang&rsquo;s infamous Easter sprinkling tradition. Though it was a bit drier than in previous years and we didn&rsquo;t run into Denis Musimbe this time, the atmosphere was fantastic, especially while chilling under the studio.</figcaption>
             </figure>
 
-            <figure data-reveal class="md:col-span-5">
-              <div data-img-wrap class="media-frame aspect-[4/5]">
+            <figure data-reveal style="--d:200ms">
+              <div data-img-wrap class="media-frame aspect-[4/3] lg:aspect-[16/10]">
                 <span class="media-label" aria-hidden="true">Image 5 &middot; Bean goulash</span>
                 <img src="goulash.jpg" alt="Bean goulash bubbling in a pot"
                      class="photo img-fade absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
               </div>
               <figcaption class="story-caption"><span class="story-index">03</span>A majestic bean goulash bubbling away, as we get lost exploring the ecstasy of flavors. Photo by Tomi &mdash; the mastermind behind the name &lsquo;Beerbershop&rsquo;, the grandmaster of easing the pre-haircut tension, and the proud, glorious owner of &lsquo;The Terrace&rsquo;.</figcaption>
             </figure>
-
-            <figure data-reveal class="md:col-span-7 md:mt-28" style="--d:100ms">
-              <div data-img-wrap class="media-frame aspect-video">
-                <span class="media-label" aria-hidden="true">Video &middot; Cs&ouml;szke&rsquo;s car</span>
-                <!-- EDIT: video file (add poster="story-06-car.jpg" for a cover frame) -->
-                <video class="photo img-fade absolute inset-0 h-full w-full object-cover" data-story-video
-                       controls playsinline preload="metadata" aria-label="The Gyurkits boys launching Cs&ouml;szke&rsquo;s car">
-                  <source src="Video.mp4" type="video/mp4" />
-                </video>
-              </div>
-              <figcaption class="story-caption"><span class="story-index">04</span>The Gyurkits boys launching Cs&ouml;szke&rsquo;s car. The video speaks for itself.</figcaption>
-            </figure>
+            </div>
           </div>
         </div>
 
@@ -1078,7 +1251,7 @@
       <div class="grid gap-12 md:grid-cols-12">
  
         <div class="md:col-span-5">
-          <a href="#home" class="text-[0.8rem] font-semibold uppercase tracking-[0.32em]">Linea</a>
+          <a href="#home" class="text-[0.8rem] font-semibold uppercase tracking-[0.32em]">Gyurkutz.</a>
           <p class="mt-4 max-w-xs text-sm leading-relaxed text-neutral-500">Precision haircuts in a calm, private home studio.</p>
         </div>
  
@@ -1087,7 +1260,7 @@
           <!-- EDIT: add your city / district -->
           <address class="mt-4 text-sm not-italic leading-relaxed text-neutral-700">
             Private home studio<br />
-            Your City, Country<br />
+            Baja, Hungary<br />
             <span class="text-neutral-500">Exact address shared with your booking confirmation.</span>
           </address>
         </div>
@@ -1105,7 +1278,7 @@
       </div>
  
       <div class="mt-14 flex flex-col gap-4 border-t border-neutral-200 pt-6 text-xs text-neutral-500 sm:flex-row sm:items-center sm:justify-between">
-        <p>&copy; <span id="year">2026</span> Linea. All rights reserved.</p>
+        <p>&copy; <span id="year">2026</span> All rights reserved.</p>
         <a href="#home" class="inline-flex items-center gap-2 transition-colors duration-300 hover:text-neutral-900">
           Back to top
           <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" /></svg>
@@ -1497,6 +1670,9 @@
           url.searchParams.set('background_color', 'ffffff');
           url.searchParams.set('text_color', '171717');
           url.searchParams.set('primary_color', '0a0a0a');
+          // Inline-embed mode: lets Calendly report its content height (auto-height below).
+          url.searchParams.set('embed_type', 'Inline');
+          if (window.location.host) url.searchParams.set('embed_domain', window.location.host);
           src = url.toString();
         } catch (error) {
           console.warn('[booking] CONFIG.calendlyUrl is not a valid URL:', raw);
@@ -1512,6 +1688,25 @@
         const placeholder = $('#booking-placeholder');
         if (placeholder) placeholder.remove();
         holder.appendChild(frame);
+
+        // Auto-height: Calendly posts "calendly.page_height" whenever its content
+        // changes size (month view → time slots → details form). Matching the
+        // iframe to it means no inner scrollbar, so on phones a swipe over the
+        // calendar always scrolls the page. If no message ever arrives, the tall
+        // CSS fallback heights (section 11 in the <style>) still apply.
+        window.addEventListener('message', (event) => {
+          if (event.source !== frame.contentWindow) return;
+          if (!/^https:\/\/([a-z0-9-]+\.)*calendly\.com$/i.test(event.origin)) return;
+
+          let data = event.data;
+          if (typeof data === 'string') {
+            try { data = JSON.parse(data); } catch (error) { return; }
+          }
+          if (!data || data.event !== 'calendly.page_height') return;
+
+          const height = parseFloat(data.payload && data.payload.height);
+          if (height > 0) frame.style.setProperty('--embed-h', Math.ceil(height) + 'px');
+        });
       }
  
       /* ======================================================================
@@ -1529,22 +1724,35 @@
       }
 
       /* ======================================================================
-         10 · STORY VIDEO — fade in when ready, placeholder if the file is missing
+         10 · SUPPORTERS — initials circle on every card + live supporter count
+            (so a pasted card needs nothing but a name, a level and a badge)
          ====================================================================== */
-      function initVideos() {
-        $$('video[data-story-video]').forEach((video) => {
-          const wrap = video.closest('[data-img-wrap]');
-          const ok  = () => video.classList.add('is-loaded');
-          const bad = () => { if (wrap) wrap.classList.add('is-broken'); };
-          const sources = $$('source', video);
+      function initSupporters() {
+        const grid = $('#supporters-grid');
+        if (!grid) return;
 
-          if (video.readyState >= 1) ok();
-          else video.addEventListener('loadedmetadata', ok, { once: true });
+        const cards = $$('[data-supporter]', grid);
 
-          if (sources.length) sources[sources.length - 1].addEventListener('error', bad, { once: true });
-          else video.addEventListener('error', bad, { once: true });
-          if (video.networkState === 3) bad(); // NETWORK_NO_SOURCE
+        cards.forEach((card) => {
+          if ($('.supporter-avatar', card)) return;
+          const nameEl = $('.supporter-name', card);
+          const name = nameEl ? nameEl.textContent.trim() : '';
+          const initials = name
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0, 2)
+            .map((word) => Array.from(word)[0])
+            .join('')
+            .toLocaleUpperCase('hu');
+
+          const avatar = document.createElement('span');
+          avatar.className = 'supporter-avatar';
+          avatar.setAttribute('aria-hidden', 'true');
+          avatar.textContent = initials || '·';
+          card.prepend(avatar);
         });
+
+        $$('[data-supporter-count]').forEach((el) => { el.textContent = String(cards.length); });
       }
 
       /* ======================================================================
@@ -1560,7 +1768,7 @@
         initLightbox();
         initBooking();
         initMembership();
-        initVideos();
+        initSupporters();
 
         const year = $('#year');
         if (year) year.textContent = String(new Date().getFullYear());
